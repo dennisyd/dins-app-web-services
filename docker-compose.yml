@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+
+  internal-recipes-service:
+    build: ./internal-recipes-service
+    ports: 
+      - 127.0.0.1:9201:9201
+    environment:
+      - PORT=9201

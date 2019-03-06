@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package lasagna.srv.internal.recipes.service;
+
+service InternalRecipesService {
+    rpc CreateRecipe(Recipe) returns (Response) {}
+    rpc GetRecipes(GetRequest) returns (Response) {}
+} 
+
+message Recipe {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+}
+
+message GetRequest {}
+
+message Response {
+    bool created = 1;
+    Recipe recipe = 2;
+    repeated Recipe recipes = 3;
+}
+
