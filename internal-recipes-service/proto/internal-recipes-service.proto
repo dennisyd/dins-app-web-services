@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package lasagna.srv.internal.recipes.service;
+option go_package = "internal.recipes.service";
 
 service InternalRecipesService {
     rpc CreateRecipe(Recipe) returns (Response) {}

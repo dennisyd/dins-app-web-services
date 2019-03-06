@@ -111,6 +111,9 @@ github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/team-morpheus/lasagna-msa v0.0.0-20190306055654-f9e3dba71afd h1:kLpM2cVrT1EQNlfdBs6SaToGOEdmfUuwy1QN28lQlzk=
+github.com/team-morpheus/lasagna-msa v0.0.0-20190306081737-1d4125f496a3 h1:UpuTMl9jf8nUadkvtshKHLLVQu7hS7v3vH1f6ZefgqM=
+github.com/twitchtv/twirp v5.5.2+incompatible h1:A2a6kqqvcMJIhjbvL0+1cCuIgwudBTYG91BlqaCaNso=
+github.com/twitchtv/twirp v5.5.2+incompatible/go.mod h1:RRJoFSAmTEh2weEqWtpPE3vFK5YBhA6bqp2l1kfCC5A=
 golang.org/x/crypto v0.0.0-20181029021203-45a5f77698d3/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/crypto v0.0.0-20190130090550-b01c7a725664/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/crypto v0.0.0-20190211182817-74369b46fc67/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
