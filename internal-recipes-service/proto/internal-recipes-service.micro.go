@@ -2,7 +2,7 @@
 // source: internal-recipes-service.proto
 
 /*
-Package lasagna_srv_internal_recipes_service is a generated protocol buffer package.
+Package lasagna_internal_recipes_service is a generated protocol buffer package.
 
 It is generated from these files:
 	internal-recipes-service.proto
@@ -12,7 +12,7 @@ It has these top-level messages:
 	Request
 	Response
 */
-package lasagna_srv_internal_recipes_service
+package lasagna_internal_recipes_service
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -57,7 +57,7 @@ func NewInternalRecipesService(name string, c client.Client) InternalRecipesServ
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "lasagna.srv.internal.recipes.service"
+		name = "lasagna.internal.recipes.service"
 	}
 	return &internalRecipesService{
 		c:    c,
