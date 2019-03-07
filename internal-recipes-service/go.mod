@@ -10,5 +10,6 @@ require (
 	github.com/micro/go-micro v1.0.0
 	github.com/micro/protoc-gen-micro v0.6.0 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
+	github.com/rs/cors v1.6.0
 	github.com/twitchtv/twirp v5.5.2+incompatible
 )
