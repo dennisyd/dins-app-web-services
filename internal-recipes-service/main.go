@@ -1,30 +1,28 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 
-	"github.com/rs/cors"
-
+	micro "github.com/micro/go-micro"
 	pb "github.com/team-morpheus/lasagna-msa/internal-recipes-service/proto"
 )
 
 func main() {
-	mux := http.NewServeMux()
 
-	// register server with handler
-	server := pb.NewInternalRecipesServiceServer(&handler{}, nil)
+	// create new service
+	service := micro.NewService(
+		micro.Name("lasagna.internal.recipes.service"),
+		micro.Version("v1"),
+	)
 
-	mux.Handle(pb.InternalRecipesServicePathPrefix, server)
+	// parse command line flags
+	service.Init()
 
-	handle := cors.AllowAll().Handler(mux)
+	// register handler
+	pb.RegisterInternalRecipesServiceHandler(service.Server(), &handler{})
 
-	addr := fmt.Sprintf(":%d", 8080)
-	log.Printf("server listening at: %s", addr)
-
-	err := http.ListenAndServe(addr, handle)
-	if err != nil {
-		log.Fatalln(err)
+	// run service
+	if err := service.Run(); err != nil {
+		log.Fatalln("Unable to start internal recipes service", err)
 	}
 }

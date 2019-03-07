@@ -2,21 +2,25 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	pb "github.com/team-morpheus/lasagna-msa/internal-recipes-service/proto"
 )
 
 type handler struct{}
 
-// CreateRecipe creates a recipe
-func (h *handler) CreateRecipe(ctx context.Context, recipe *pb.Recipe) (*pb.Response, error) {
-	fmt.Println("Received Create Req", recipe)
-	return &pb.Response{}, nil
+func (h *handler) CreateRecipe(ctx context.Context, r *pb.Recipe, res *pb.Response) error {
+	res.Created = true
+	res.Recipe = r
+	return nil
 }
 
-// GetRecipes gets all recipes
-func (h *handler) GetRecipes(ctx context.Context, req *pb.GetRequest) (*pb.Response, error) {
-	fmt.Println("Received Get All Req")
-	return &pb.Response{}, nil
+func (h *handler) GetRecipes(ctx context.Context, req *pb.Request, res *pb.Response) error {
+	recipes := []*pb.Recipe{
+		&pb.Recipe{
+			Name:        "test",
+			Description: "hello this is a test",
+		},
+	}
+	res.Recipes = recipes
+	return nil
 }

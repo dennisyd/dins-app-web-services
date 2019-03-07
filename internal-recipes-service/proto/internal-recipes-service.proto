@@ -1,11 +1,10 @@
 syntax = "proto3";
 
 package lasagna.srv.internal.recipes.service;
-option go_package = "internal.recipes.service";
 
 service InternalRecipesService {
     rpc CreateRecipe(Recipe) returns (Response) {}
-    rpc GetRecipes(GetRequest) returns (Response) {}
+    rpc GetRecipes(Request) returns (Response) {}
 } 
 
 message Recipe {
@@ -14,7 +13,7 @@ message Recipe {
     string description = 3;
 }
 
-message GetRequest {}
+message Request {}
 
 message Response {
     bool created = 1;
