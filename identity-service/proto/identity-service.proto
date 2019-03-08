@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "proto3";
 
 package lasagna.identity.service;
 
@@ -13,36 +13,36 @@ service IdentityService {
 }
 
 message User {
-    optional uint32 id = 1 [(gogoproto.moretags) = "gorm:\"primary_key,omitempty\"", (gogoproto.casttype)="uint", (gogoproto.nullable)=true];
-    required string email = 2;
-    required string password = 3;
-    required string first_name = 4;
-    required string last_name = 5;
-    optional string description = 6;
-    optional string budget = 7;
-    optional string skill = 8;
-    optional Timestamp created_at = 9 [(gogoproto.stdtime)=true];
-    optional Timestamp updated_at = 10 [(gogoproto.stdtime)=true];
+     uint32 id = 1 [(gogoproto.moretags) = "gorm:\"primary_key,omitempty\"", (gogoproto.casttype)="uint", (gogoproto.nullable)=true];
+     string email = 2;
+     string password = 3;
+     string first_name = 4;
+     string last_name = 5;
+     string description = 6;
+     string budget = 7;
+     string skill = 8;
+     Timestamp created_at = 9 [(gogoproto.stdtime)=true];
+     Timestamp updated_at = 10 [(gogoproto.stdtime)=true];
 }
 
 message Response {
-    optional User user = 1;
+     User user = 1;
     repeated User users = 2;
     repeated Error errors = 3;
-    optional Token token = 4;
+     Token token = 4;
 }
 
 message Request {}
 
 message Token {
-    optional string token = 1;
-    optional bool valid = 2;
+     string token = 1;
+     bool valid = 2;
     repeated Error errors = 3;
 }
 
 message Error {
-    optional int32 code = 1;
-    optional string description = 2;
+     int32 code = 1;
+     string description = 2;
 }
 
 message Timestamp {
@@ -50,11 +50,11 @@ message Timestamp {
     // Represents seconds of UTC time since Unix epoch
     // 1970-01-01T00:00:00Z. Must be from from 0001-01-01T00:00:00Z to
     // 9999-12-31T23:59:59Z inclusive.
-    optional int64 seconds = 1;
+     int64 seconds = 1;
   
     // Non-negative fractions of a second at nanosecond resolution. Negative
     // second values with fractions must still have non-negative nanos values
     // that count forward in time. Must be from 0 to 999,999,999
     // inclusive.
-    optional int32 nanos = 2;
+     int32 nanos = 2;
   }
