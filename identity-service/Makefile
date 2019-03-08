@@ -1,7 +1,9 @@
-build:
-	protoc -I=proto -I=$GOPATH/src -I=$GOPATH/src/github.com/gogo/protobuf/protobuf --gogoslick_out=proto/. --micro_out=proto/. \
-    --go_out=proto/. identity-service.proto
-run:
-	docker run -p 50052:50052 \
-		-e MICRO_SERVER_ADDRESS=:50052 \
-		-e MICRO_REGISTRY=mdns identity-service
+ifndef ($(GOPATH))
+	GOPATH = $(HOME)/go
+endif
+generate:
+	@rm -f proto/identity-service.pb.go
+	@rm -f proto/identity-service.micro.go
+	@protoc --proto_path=proto:$(GOPATH)/src:$(GOPATH)/src/github.com/gogo/protobuf/protobuf \
+ 		--micro_out=proto/. --gogoslick_out=proto/. identity-service.proto
+	@echo Identity Service Protobufs Generated!

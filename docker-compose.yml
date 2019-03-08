@@ -3,7 +3,9 @@ version: '3.7'
 services:
 
   internal-recipes-service:
-    build: ./internal-recipes-service
+    build:
+      context: .
+      dockerfile: ./internal-recipes-service/Dockerfile
     ports: 
       - 50051:50051
     environment: 
@@ -11,7 +13,9 @@ services:
       MICRO_REGISTRY: "mdns"
 
   api-service:
-    build: ./api-service
+    build:
+      context: .
+      dockerfile: ./api-service/Dockerfile
     ports:
       - 127.0.0.1:9000:9000
     environment:
@@ -29,7 +33,9 @@ services:
       POSTGRES_PASSWORD: "supersecretpassword"
       POSTGRES_DB: "users"
   identity-service:
-    build: ./identity-service
+    build:
+      context: .
+      dockerfile: ./identity-service/Dockerfile
     ports: 
       - 50052:50051
     environment:
@@ -39,5 +45,6 @@ services:
       DB_USER: "postgres"
       DB_NAME: "users"
       DB_PASSWORD: "supersecretpassword"
+      JWT_SECRET: "supersecret"
     depends_on:
       - database

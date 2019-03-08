@@ -60,9 +60,13 @@ func (repo *UserRepository) GetByEmail(email string) (*pb.User, error) {
 // Create creates user in the db
 func (repo *UserRepository) Create(user *pb.User) error {
 
-	// create user in db
-	if err := repo.db.Create(user).Error; err != nil {
-		return err
+	// make sure user doesn't exist
+	if err := repo.db.Where("email = ?", user.Email).First(&user).Error; err != nil {
+
+		// create user in db
+		if err := repo.db.Create(user).Error; err != nil {
+			return err
+		}
 	}
 
 	// return no error

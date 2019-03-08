@@ -45,9 +45,9 @@ func (s *TokenService) Decode(token string) (*CustomClaims, error) {
 	// Validate token and return claims
 	if claims, ok := tokenType.Claims.(*CustomClaims); ok && tokenType.Valid {
 		return claims, nil
-	} else {
-		return nil, err
 	}
+	return nil, err
+
 }
 
 // Encode encodes data to a jwt token

@@ -102,6 +102,7 @@ func (h *handler) Create(ctx context.Context, req *pb.User, res *pb.Response) er
 	// set res and return no error
 	res.User = req
 	res.Token = &pb.Token{Token: token}
+	res.Token.Valid = true
 	return nil
 }
 

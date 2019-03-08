@@ -1,9 +1,9 @@
-build:
-	docker build -t internal-recipes-service .
-	rm -f proto/*.go
-	docker run --entrypoint cat internal-recipes-service internal-recipes-service.pb.go > proto/internal-recipes-service.pb.go
-	docker run --entrypoint cat internal-recipes-service internal-recipes-service.micro.go > proto/internal-recipes-service.micro.go
-run:
-	docker run -p 50051:50051 \
-		-e MICRO_SERVER_ADDRESS=:50051 \
-		-e MICRO_REGISTRY=mdns internal-recipes-service
+ifndef ($(GOPATH))
+	GOPATH = $(HOME)/go
+endif
+generate:
+	@rm -f proto/internal-recipes-service.pb.go
+	@rm -f proto/internal-recipes-service.micro.go
+	@protoc --proto_path=proto:$(GOPATH)/src:$(GOPATH)/src/github.com/gogo/protobuf/protobuf \
+ 		--micro_out=proto/. --gogoslick_out=proto/. internal-recipes-service.proto
+	@echo Internal Recipes Service Protobufs Generated!
