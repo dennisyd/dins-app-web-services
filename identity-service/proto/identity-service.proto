@@ -13,7 +13,7 @@ service IdentityService {
 }
 
 message User {
-    optional uint32 id = 1 [(gogoproto.moretags) = "gorm:\"primary_key,omitempty\"", (gogoproto.casttype)="uint"];
+    optional uint32 id = 1 [(gogoproto.moretags) = "gorm:\"primary_key,omitempty\"", (gogoproto.casttype)="uint", (gogoproto.nullable)=true];
     required string email = 2;
     required string password = 3;
     required string first_name = 4;
