@@ -1,8 +1,6 @@
 build:
-	docker build -t identity-service .
-	find proto -t f -not -name 'extensions.go' -not -name 'identity-service.proto' -delete
-	docker run --entrypoint cat identity-service identity-service.pb.go > proto/identity-service.pb.go
-	docker run --entrypoint cat identity-service identity-service.micro.go > proto/identity-service.micro.go
+	protoc -I=proto -I=$GOPATH/src -I=$GOPATH/src/github.com/gogo/protobuf/protobuf --gogoslick_out=proto/. --micro_out=proto/. \
+    --go_out=proto/. identity-service.proto
 run:
 	docker run -p 50052:50052 \
 		-e MICRO_SERVER_ADDRESS=:50052 \

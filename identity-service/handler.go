@@ -117,7 +117,7 @@ func (h *handler) ValidateToken(ctx context.Context, req *pb.Token, res *pb.Toke
 	// print claims
 	log.Println(claims)
 
-	if claims.User.Id == "" {
+	if claims.User.Id == 0 {
 		return errors.New("invalid user")
 	}
 

@@ -8,7 +8,7 @@ import (
 // Repository is our interface handler methods will conform to
 type Repository interface {
 	GetAll() ([]*pb.User, error)
-	Get(id string) (*pb.User, error)
+	Get(id uint) (*pb.User, error)
 	Create(user *pb.User) error
 	GetByEmail(email string) (*pb.User, error)
 }
@@ -19,7 +19,7 @@ type UserRepository struct {
 }
 
 // Get retreives a user from the db by id
-func (repo *UserRepository) Get(id uint32) (*pb.User, error) {
+func (repo *UserRepository) Get(id uint) (*pb.User, error) {
 	var user *pb.User
 	user.Id = id
 
