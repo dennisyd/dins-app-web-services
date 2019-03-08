@@ -5,7 +5,7 @@ WORKDIR /identity-service
 COPY go.mod .
 COPY go.sum .
 
-RUN apk update && apk add --update --no-cache ca-certificates git
+RUN apk update && apk add --update --no-cache ca-certificates git protobuf
 
 RUN go mod download
 COPY . .
