@@ -18,9 +18,9 @@ message User {
     string first_name = 3;
     string last_name = 4;
     string password = 5;
-    uint32 id = 6 [(gogoproto.moretags) = "gorm:\"primary_key\"", (gogoproto.casttype)="uint", (gogoproto.nullable)=true];
-    Timestamp created_at = 7 [(gogoproto.casttype)="time.Time", (gogoproto.nullable)=true];
-    Timestamp updated_at = 8 [(gogoproto.casttype)="time.Time", (gogoproto.nullable)=true];
+    uint32 id = 6 [(gogoproto.moretags) = "gorm:\"primary_key,omitempty\"", (gogoproto.casttype)="uint", (gogoproto.nullable)=true];
+    Timestamp created_at = 7;
+    Timestamp updated_at = 8;
 }
 
 message Response {
