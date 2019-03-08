@@ -3,7 +3,6 @@ syntax = "proto2";
 package lasagna.identity.service;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
-import "google/protobuf/timestamp.proto";
 
 service IdentityService {
     rpc Create(User) returns (Response) {}
@@ -22,8 +21,8 @@ message User {
     optional string description = 6;
     optional string budget = 7;
     optional string skill = 8;
-    optional google.protobuf.Timestamp created_at = 9 [(gogoproto.stdtime)=true];
-    optional google.protobuf.Timestamp updated_at = 10 [(gogoproto.stdtime)=true];
+    optional Timestamp created_at = 9 [(gogoproto.stdtime)=true];
+    optional Timestamp updated_at = 10 [(gogoproto.stdtime)=true];
 }
 
 message Response {
@@ -45,3 +44,17 @@ message Error {
     optional int32 code = 1;
     optional string description = 2;
 }
+
+message Timestamp {
+
+    // Represents seconds of UTC time since Unix epoch
+    // 1970-01-01T00:00:00Z. Must be from from 0001-01-01T00:00:00Z to
+    // 9999-12-31T23:59:59Z inclusive.
+    optional int64 seconds = 1;
+  
+    // Non-negative fractions of a second at nanosecond resolution. Negative
+    // second values with fractions must still have non-negative nanos values
+    // that count forward in time. Must be from 0 to 999,999,999
+    // inclusive.
+    optional int32 nanos = 2;
+  }
