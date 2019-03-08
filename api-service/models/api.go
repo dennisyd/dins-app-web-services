@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/labstack/echo"
-	iPb "github.com/team-morpheus/lasagna-msa/internal-recipes-service/proto"
+	iPb "github.com/team-morpheus/lasagna-msa/identity-service/proto"
 	irPb "github.com/team-morpheus/lasagna-msa/internal-recipes-service/proto"
 )
 

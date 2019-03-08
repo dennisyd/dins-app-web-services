@@ -2,18 +2,16 @@ syntax = "proto3";
 
 package lasagna.identity.service;
 
-import "github.com/infobloxopen/protoc-gen-gorm/options/gorm.proto";
-
 service IdentityService {
-    option (gorm.server).autogen = true;
-
-    rpc Create(CreateUserRequest) returns (CreateUserResponse) {}
+    rpc Create(User) returns (Response) {}
+    rpc Get(User) returns (Response) {}
+    rpc GetAll(Request) returns (Response) {}
+    rpc Auth(User) returns (Token) {}
+    rpc ValidateToken(Token) returns (Token) {}
 }
 
 message User {
-    option (gorm.opts) = {ormable: true};
-
-    uint32 id = 1;
+    string id = 1;
     string email = 2;
     string description = 3;
     string first_name = 4;
@@ -24,10 +22,22 @@ message User {
     uint32 skill = 9;
 }
 
-message CreateUserRequest {
-    User payload = 1;
+message Response {
+    User user = 1;
+    repeated User users = 2;
+    repeated Error errors = 3;
+    Token token = 4;
 }
 
-message CreateUserResponse {
-    User result = 1;
+message Request {}
+
+message Token {
+    string token = 1;
+    bool valid = 2;
+    repeated Error errors = 3;
+}
+
+message Error {
+    int32 code = 1;
+    string description = 2;
 }
