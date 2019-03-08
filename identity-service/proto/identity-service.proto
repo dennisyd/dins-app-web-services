@@ -3,6 +3,7 @@ syntax = "proto3";
 package lasagna.identity.service;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
 
 service IdentityService {
     rpc Create(User) returns (Response) {}
@@ -19,8 +20,8 @@ message User {
     string last_name = 4;
     string password = 5;
     uint32 id = 6 [(gogoproto.moretags) = "gorm:\"primary_key\"", (gogoproto.casttype)="uint", (gogoproto.nullable)=true];
-    uint32 created_at = 7 [(gogoproto.casttype)="time.Time", (gogoproto.nullable)=true];
-    uint32 updated_at = 8 [(gogoproto.casttype)="time.Time", (gogoproto.nullable)=true];
+    google.protobuf.Timestamp created_at = 7 [(gogoproto.casttype)="time.Time", (gogoproto.nullable)=true];
+    google.protobuf.Timestamp updated_at = 8 [(gogoproto.casttype)="time.Time", (gogoproto.nullable)=true];
 }
 
 message Response {

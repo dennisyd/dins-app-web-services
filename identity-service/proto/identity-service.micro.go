@@ -20,6 +20,7 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "github.com/gogo/protobuf/gogoproto"
+import _ "google/protobuf"
 
 import (
 	context "context"

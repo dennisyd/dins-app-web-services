@@ -1,2 +1,2 @@
-protoc --proto_path=proto:$GOPATH/src:$GOPATH/src/github.com/gogo/protobuf/protobuf --gogoslick_out=proto/. --micro_out=proto/. \
- identity-service.proto
+protoc --proto_path=proto:$GOPATH/src:$GOPATH/src/github.com/gogo/protobuf/protobuf --micro_out=proto/. \
+ --gogoslick_out=Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types:proto/. identity-service.proto
