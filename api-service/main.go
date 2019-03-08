@@ -1,33 +1,27 @@
 package main
 
 import (
-	"context"
+	"os"
 
 	"github.com/labstack/echo"
 	microclient "github.com/micro/go-micro/client"
-	irsPb "github.com/team-morpheus/lasagna-msa/internal-recipes-service/proto"
+	"github.com/team-morpheus/lasagna-msa/api-service/controllers"
+	"github.com/team-morpheus/lasagna-msa/api-service/models"
+	irPb "github.com/team-morpheus/lasagna-msa/internal-recipes-service/proto"
 )
 
-const PORT = "9203"
-
 func main() {
+	api := models.API{}
+
+	// connect to services
+	api.IrSvc = irPb.NewInternalRecipesService("lasagna.internal.recipes.service", microclient.DefaultClient)
 
 	// create new instance of echo server
-	e := echo.New()
-
-	// create new pb client
-	client := irsPb.NewInternalRecipesService("lasagna.internal.recipes.service", microclient.DefaultClient)
+	api.Echo = echo.New()
 
 	// register routes
-	e.GET("/", func(c echo.Context) error {
-		// get recipes using client
-		recipes, err := client.GetRecipes(context.WithTimeout, &irsPb.Request{})
-		if err != nil {
-			return c.JSON(400, map[string]string{"error": err})
-		}
-		return c.JSON(200, recipes)
-	})
+	controllers.RegisterRecipesRoutes(&api)
 
 	// start http server wrapped with fatal helper func
-	e.Logger.Fatal(e.Start(":" + PORT))
+	api.Echo.Logger.Fatal(api.Echo.Start(os.Getenv("PORT")))
 }

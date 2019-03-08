@@ -12,7 +12,10 @@ services:
 
   api-service:
     build: ./api-service
+    ports:
+      - 127.0.0.1:9000:9000
     environment:
       MICRO_REGISTRY: "mdns"
+      PORT: ":9000"
     depends_on:
       - internal-recipes-service
