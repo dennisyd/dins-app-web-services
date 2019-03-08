@@ -23,6 +23,7 @@ func main() {
 
 	// register routes
 	controllers.RegisterRecipesRoutes(&api)
+	controllers.RegisterUsersRoutes(&api)
 
 	// start http server wrapped with fatal helper func
 	api.Echo.Logger.Fatal(api.Echo.Start(os.Getenv("PORT")))

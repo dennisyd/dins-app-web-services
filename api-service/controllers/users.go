@@ -33,7 +33,7 @@ func (h *UsersHandler) CreateUser(c echo.Context) error {
 	}
 
 	// create user using client
-	resp, err := h.api.ISvc.Create(context.Background(), &iPb.Request{})
+	resp, err := h.api.ISvc.Create(context.Background(), &user)
 	if err != nil {
 		return c.JSON(400, map[string]string{"error": err.Error()})
 	}

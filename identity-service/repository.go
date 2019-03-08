@@ -19,7 +19,7 @@ type UserRepository struct {
 }
 
 // Get retreives a user from the db by id
-func (repo *UserRepository) Get(id string) (*pb.User, error) {
+func (repo *UserRepository) Get(id uint32) (*pb.User, error) {
 	var user *pb.User
 	user.Id = id
 

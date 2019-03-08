@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package lasagna.identity.service;
 
+import "github.com/golang/protobuf/ptypes/timestamp/timestamp.proto";
+
 service IdentityService {
     rpc Create(User) returns (Response) {}
     rpc Get(User) returns (Response) {}
@@ -11,15 +13,16 @@ service IdentityService {
 }
 
 message User {
-    string id = 1;
-    string email = 2;
-    string description = 3;
-    string first_name = 4;
-    string last_name = 5;
-    string password = 6;
-    string token = 7;
-    uint32 budget = 8;
-    uint32 skill = 9;
+    uint32 id = 1;  //`gorm:"primary_key"`
+    google.protobuf.Timestamp created_at = 2;
+    google.protobuf.Timestamp updated_at = 3;
+    string email = 4;
+    string description = 5;
+    string first_name = 6;
+    string last_name = 7;
+    string password = 8;
+    uint32 budget = 9;
+    uint32 skill = 10;
 }
 
 message Response {

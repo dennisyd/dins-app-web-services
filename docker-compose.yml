@@ -22,12 +22,12 @@ services:
       - identity-service
   
   database:
-    image: postgres
+    image: postgres:alpine
     ports:
       - 127.0.0.1:5432:5432
     environment:
       POSTGRES_PASSWORD: "supersecretpassword"
-  
+      POSTGRES_DB: "users"
   identity-service:
     build: ./identity-service
     ports: 
