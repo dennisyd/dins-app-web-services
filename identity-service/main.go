@@ -28,7 +28,7 @@ func main() {
 
 	// Create new micro service
 	srv := micro.NewService(
-		micro.Name("lasagna.api.identity"),
+		micro.Name("dins.app.api.v1.identity"),
 		micro.Version("v1"),
 	)
 

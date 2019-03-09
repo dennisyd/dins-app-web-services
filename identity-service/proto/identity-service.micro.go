@@ -2,7 +2,7 @@
 // source: identity-service.proto
 
 /*
-Package lasagna_identity is a generated protocol buffer package.
+Package dins_app_api_v1_identity is a generated protocol buffer package.
 
 It is generated from these files:
 	identity-service.proto
@@ -15,7 +15,7 @@ It has these top-level messages:
 	Error
 	Timestamp
 */
-package lasagna_identity
+package dins_app_api_v1_identity
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -64,7 +64,7 @@ func NewIdentityService(name string, c client.Client) IdentityService {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "lasagna.identity"
+		name = "dins.app.api.v1.identity"
 	}
 	return &identityService{
 		c:    c,

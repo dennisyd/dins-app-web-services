@@ -2,7 +2,7 @@
 // source: internal-recipes-service.proto
 
 /*
-Package lasagna_api_recipes is a generated protocol buffer package.
+Package dins_app_api_v1_recipes is a generated protocol buffer package.
 
 It is generated from these files:
 	internal-recipes-service.proto
@@ -12,7 +12,7 @@ It has these top-level messages:
 	Request
 	Response
 */
-package lasagna_api_recipes
+package dins_app_api_v1_recipes
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -57,7 +57,7 @@ func NewRecipesService(name string, c client.Client) RecipesService {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "lasagna.api.recipes"
+		name = "dins.app.api.v1.recipes"
 	}
 	return &recipesService{
 		c:    c,

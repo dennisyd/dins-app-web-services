@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package lasagna.api.recipes;
+package dins.app.api.v1.recipes;
 
 service Recipes {
     rpc Create(Recipe) returns (Response) {}

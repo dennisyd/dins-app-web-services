@@ -41,7 +41,7 @@ services:
     environment:
       MICRO_REGISTRY: "mdns"
       MICRO_ADDRESS: ":50051"
-      MICRO_API_NAMESPACE: "lasagna.api"
+      MICRO_API_NAMESPACE: "dins.app.api"
       MICRO_API_HANDLER: "rpc"
       MICRO_API_ADDRESS: "0.0.0.0:8080"
       MICRO_ENABLE_STATS: "true"

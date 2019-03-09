@@ -11,7 +11,7 @@ func main() {
 
 	// create new service
 	service := micro.NewService(
-		micro.Name("lasagna.internal.recipes.service"),
+		micro.Name("dins.app.api.v1.recipes"),
 		micro.Version("v1"),
 	)
 

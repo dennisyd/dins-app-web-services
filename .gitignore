@@ -36,3 +36,5 @@
 .nfs*
 
 # End of https://www.gitignore.io/api/linux,go
+dins-234008-6ed4c936e537.json
+*.tf
