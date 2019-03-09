@@ -19,7 +19,7 @@ func main() {
 	service.Init()
 
 	// register handler
-	pb.RegisterInternalRecipesServiceHandler(service.Server(), &handler{})
+	pb.RegisterRecipesHandler(service.Server(), &handler{})
 
 	// run service
 	if err := service.Run(); err != nil {

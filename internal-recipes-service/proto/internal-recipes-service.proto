@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package lasagna.internal.recipes.service;
+package lasagna.api.recipes;
 
-service InternalRecipesService {
-    rpc CreateRecipe(Recipe) returns (Response) {}
-    rpc GetRecipes(Request) returns (Response) {}
+service Recipes {
+    rpc Create(Recipe) returns (Response) {}
+    rpc Get(Request) returns (Response) {}
 } 
 
 message Recipe {

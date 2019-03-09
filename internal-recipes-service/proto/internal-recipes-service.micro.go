@@ -2,7 +2,7 @@
 // source: internal-recipes-service.proto
 
 /*
-Package lasagna_internal_recipes_service is a generated protocol buffer package.
+Package lasagna_api_recipes is a generated protocol buffer package.
 
 It is generated from these files:
 	internal-recipes-service.proto
@@ -12,7 +12,7 @@ It has these top-level messages:
 	Request
 	Response
 */
-package lasagna_internal_recipes_service
+package lasagna_api_recipes
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -40,33 +40,33 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Client API for InternalRecipesService service
+// Client API for Recipes service
 
-type InternalRecipesService interface {
-	CreateRecipe(ctx context.Context, in *Recipe, opts ...client.CallOption) (*Response, error)
-	GetRecipes(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
+type RecipesService interface {
+	Create(ctx context.Context, in *Recipe, opts ...client.CallOption) (*Response, error)
+	Get(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
 }
 
-type internalRecipesService struct {
+type recipesService struct {
 	c    client.Client
 	name string
 }
 
-func NewInternalRecipesService(name string, c client.Client) InternalRecipesService {
+func NewRecipesService(name string, c client.Client) RecipesService {
 	if c == nil {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "lasagna.internal.recipes.service"
+		name = "lasagna.api.recipes"
 	}
-	return &internalRecipesService{
+	return &recipesService{
 		c:    c,
 		name: name,
 	}
 }
 
-func (c *internalRecipesService) CreateRecipe(ctx context.Context, in *Recipe, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "InternalRecipesService.CreateRecipe", in)
+func (c *recipesService) Create(ctx context.Context, in *Recipe, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Recipes.Create", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -75,8 +75,8 @@ func (c *internalRecipesService) CreateRecipe(ctx context.Context, in *Recipe, o
 	return out, nil
 }
 
-func (c *internalRecipesService) GetRecipes(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "InternalRecipesService.GetRecipes", in)
+func (c *recipesService) Get(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Recipes.Get", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -85,33 +85,33 @@ func (c *internalRecipesService) GetRecipes(ctx context.Context, in *Request, op
 	return out, nil
 }
 
-// Server API for InternalRecipesService service
+// Server API for Recipes service
 
-type InternalRecipesServiceHandler interface {
-	CreateRecipe(context.Context, *Recipe, *Response) error
-	GetRecipes(context.Context, *Request, *Response) error
+type RecipesHandler interface {
+	Create(context.Context, *Recipe, *Response) error
+	Get(context.Context, *Request, *Response) error
 }
 
-func RegisterInternalRecipesServiceHandler(s server.Server, hdlr InternalRecipesServiceHandler, opts ...server.HandlerOption) error {
-	type internalRecipesService interface {
-		CreateRecipe(ctx context.Context, in *Recipe, out *Response) error
-		GetRecipes(ctx context.Context, in *Request, out *Response) error
+func RegisterRecipesHandler(s server.Server, hdlr RecipesHandler, opts ...server.HandlerOption) error {
+	type recipes interface {
+		Create(ctx context.Context, in *Recipe, out *Response) error
+		Get(ctx context.Context, in *Request, out *Response) error
 	}
-	type InternalRecipesService struct {
-		internalRecipesService
+	type Recipes struct {
+		recipes
 	}
-	h := &internalRecipesServiceHandler{hdlr}
-	return s.Handle(s.NewHandler(&InternalRecipesService{h}, opts...))
+	h := &recipesHandler{hdlr}
+	return s.Handle(s.NewHandler(&Recipes{h}, opts...))
 }
 
-type internalRecipesServiceHandler struct {
-	InternalRecipesServiceHandler
+type recipesHandler struct {
+	RecipesHandler
 }
 
-func (h *internalRecipesServiceHandler) CreateRecipe(ctx context.Context, in *Recipe, out *Response) error {
-	return h.InternalRecipesServiceHandler.CreateRecipe(ctx, in, out)
+func (h *recipesHandler) Create(ctx context.Context, in *Recipe, out *Response) error {
+	return h.RecipesHandler.Create(ctx, in, out)
 }
 
-func (h *internalRecipesServiceHandler) GetRecipes(ctx context.Context, in *Request, out *Response) error {
-	return h.InternalRecipesServiceHandler.GetRecipes(ctx, in, out)
+func (h *recipesHandler) Get(ctx context.Context, in *Request, out *Response) error {
+	return h.RecipesHandler.Get(ctx, in, out)
 }

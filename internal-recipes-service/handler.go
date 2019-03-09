@@ -8,13 +8,13 @@ import (
 
 type handler struct{}
 
-func (h *handler) CreateRecipe(ctx context.Context, r *pb.Recipe, res *pb.Response) error {
+func (h *handler) Create(ctx context.Context, r *pb.Recipe, res *pb.Response) error {
 	res.Created = true
 	res.Recipe = r
 	return nil
 }
 
-func (h *handler) GetRecipes(ctx context.Context, req *pb.Request, res *pb.Response) error {
+func (h *handler) Get(ctx context.Context, req *pb.Request, res *pb.Response) error {
 	recipes := []*pb.Recipe{
 		&pb.Recipe{
 			Name:        "test",

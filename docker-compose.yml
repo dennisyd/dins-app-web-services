@@ -1,30 +1,15 @@
-version: '3.7'
+version: "3.7"
 
 services:
-
   internal-recipes-service:
     build:
       context: .
       dockerfile: ./internal-recipes-service/Dockerfile
-    ports: 
+    ports:
       - 50051:50051
-    environment: 
+    environment:
       MICRO_ADDRESS: ":50051"
       MICRO_REGISTRY: "mdns"
-
-  # api-service:
-  #   build:
-  #     context: .
-  #     dockerfile: ./api-service/Dockerfile
-  #   ports:
-  #     - 127.0.0.1:9000:9000
-  #   environment:
-  #     MICRO_REGISTRY: "mdns"
-  #     PORT: ":9000"
-  #   depends_on:
-  #     - internal-recipes-service
-  #     - identity-service
-  
   database:
     image: postgres:alpine
     ports:
@@ -36,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: ./identity-service/Dockerfile
-    ports: 
+    ports:
       - 50052:50051
     environment:
       MICRO_ADDRESS: ":50051"
