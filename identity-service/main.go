@@ -28,7 +28,7 @@ func main() {
 
 	// Create new micro service
 	srv := micro.NewService(
-		micro.Name("lasagna.identity.service"),
+		micro.Name("lasagna.api.identity"),
 		micro.Version("v1"),
 	)
 
@@ -36,7 +36,7 @@ func main() {
 	srv.Init()
 
 	// Register service handler
-	pb.RegisterIdentityServiceHandler(srv.Server(), &handler{repo, tokenService})
+	pb.RegisterIdentityHandler(srv.Server(), &handler{repo, tokenService})
 
 	// Run the server
 	if err := srv.Run(); err != nil {

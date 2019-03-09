@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"log"
+
+	"github.com/micro/go-micro/errors"
 
 	pb "github.com/team-morpheus/lasagna-msa/identity-service/proto"
 	"golang.org/x/crypto/bcrypt"
@@ -76,6 +78,11 @@ func (h *handler) Auth(ctx context.Context, req *pb.User, res *pb.Token) error {
 // Create is our handler for creating a user in the repo
 func (h *handler) Create(ctx context.Context, req *pb.User, res *pb.Response) error {
 
+	// user validation
+	if len(req.FirstName) < 3 {
+		return errors.BadRequest("lasagna.api.identity", fmt.Sprintf("Expected first name to be greater than 3 character but got '%s'", req.FirstName))
+	}
+
 	// generate hashed password
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), 10)
 	if err != nil {
@@ -119,7 +126,7 @@ func (h *handler) ValidateToken(ctx context.Context, req *pb.Token, res *pb.Toke
 	log.Println(claims)
 
 	if claims.User.Id == 0 {
-		return errors.New("invalid user")
+		return errors.New("lasagna.api.identity", "invalid user", 400)
 	}
 
 	// set res and return no error

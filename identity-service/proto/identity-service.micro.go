@@ -2,7 +2,7 @@
 // source: identity-service.proto
 
 /*
-Package lasagna_identity_service is a generated protocol buffer package.
+Package lasagna_identity is a generated protocol buffer package.
 
 It is generated from these files:
 	identity-service.proto
@@ -15,7 +15,7 @@ It has these top-level messages:
 	Error
 	Timestamp
 */
-package lasagna_identity_service
+package lasagna_identity
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -44,7 +44,7 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Client API for IdentityService service
+// Client API for Identity service
 
 type IdentityService interface {
 	Create(ctx context.Context, in *User, opts ...client.CallOption) (*Response, error)
@@ -64,7 +64,7 @@ func NewIdentityService(name string, c client.Client) IdentityService {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "lasagna.identity.service"
+		name = "lasagna.identity"
 	}
 	return &identityService{
 		c:    c,
@@ -73,7 +73,7 @@ func NewIdentityService(name string, c client.Client) IdentityService {
 }
 
 func (c *identityService) Create(ctx context.Context, in *User, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "IdentityService.Create", in)
+	req := c.c.NewRequest(c.name, "Identity.Create", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -83,7 +83,7 @@ func (c *identityService) Create(ctx context.Context, in *User, opts ...client.C
 }
 
 func (c *identityService) Get(ctx context.Context, in *User, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "IdentityService.Get", in)
+	req := c.c.NewRequest(c.name, "Identity.Get", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -93,7 +93,7 @@ func (c *identityService) Get(ctx context.Context, in *User, opts ...client.Call
 }
 
 func (c *identityService) GetAll(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "IdentityService.GetAll", in)
+	req := c.c.NewRequest(c.name, "Identity.GetAll", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -103,7 +103,7 @@ func (c *identityService) GetAll(ctx context.Context, in *Request, opts ...clien
 }
 
 func (c *identityService) Auth(ctx context.Context, in *User, opts ...client.CallOption) (*Token, error) {
-	req := c.c.NewRequest(c.name, "IdentityService.Auth", in)
+	req := c.c.NewRequest(c.name, "Identity.Auth", in)
 	out := new(Token)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -113,7 +113,7 @@ func (c *identityService) Auth(ctx context.Context, in *User, opts ...client.Cal
 }
 
 func (c *identityService) ValidateToken(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error) {
-	req := c.c.NewRequest(c.name, "IdentityService.ValidateToken", in)
+	req := c.c.NewRequest(c.name, "Identity.ValidateToken", in)
 	out := new(Token)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -122,9 +122,9 @@ func (c *identityService) ValidateToken(ctx context.Context, in *Token, opts ...
 	return out, nil
 }
 
-// Server API for IdentityService service
+// Server API for Identity service
 
-type IdentityServiceHandler interface {
+type IdentityHandler interface {
 	Create(context.Context, *User, *Response) error
 	Get(context.Context, *User, *Response) error
 	GetAll(context.Context, *Request, *Response) error
@@ -132,41 +132,41 @@ type IdentityServiceHandler interface {
 	ValidateToken(context.Context, *Token, *Token) error
 }
 
-func RegisterIdentityServiceHandler(s server.Server, hdlr IdentityServiceHandler, opts ...server.HandlerOption) error {
-	type identityService interface {
+func RegisterIdentityHandler(s server.Server, hdlr IdentityHandler, opts ...server.HandlerOption) error {
+	type identity interface {
 		Create(ctx context.Context, in *User, out *Response) error
 		Get(ctx context.Context, in *User, out *Response) error
 		GetAll(ctx context.Context, in *Request, out *Response) error
 		Auth(ctx context.Context, in *User, out *Token) error
 		ValidateToken(ctx context.Context, in *Token, out *Token) error
 	}
-	type IdentityService struct {
-		identityService
+	type Identity struct {
+		identity
 	}
-	h := &identityServiceHandler{hdlr}
-	return s.Handle(s.NewHandler(&IdentityService{h}, opts...))
+	h := &identityHandler{hdlr}
+	return s.Handle(s.NewHandler(&Identity{h}, opts...))
 }
 
-type identityServiceHandler struct {
-	IdentityServiceHandler
+type identityHandler struct {
+	IdentityHandler
 }
 
-func (h *identityServiceHandler) Create(ctx context.Context, in *User, out *Response) error {
-	return h.IdentityServiceHandler.Create(ctx, in, out)
+func (h *identityHandler) Create(ctx context.Context, in *User, out *Response) error {
+	return h.IdentityHandler.Create(ctx, in, out)
 }
 
-func (h *identityServiceHandler) Get(ctx context.Context, in *User, out *Response) error {
-	return h.IdentityServiceHandler.Get(ctx, in, out)
+func (h *identityHandler) Get(ctx context.Context, in *User, out *Response) error {
+	return h.IdentityHandler.Get(ctx, in, out)
 }
 
-func (h *identityServiceHandler) GetAll(ctx context.Context, in *Request, out *Response) error {
-	return h.IdentityServiceHandler.GetAll(ctx, in, out)
+func (h *identityHandler) GetAll(ctx context.Context, in *Request, out *Response) error {
+	return h.IdentityHandler.GetAll(ctx, in, out)
 }
 
-func (h *identityServiceHandler) Auth(ctx context.Context, in *User, out *Token) error {
-	return h.IdentityServiceHandler.Auth(ctx, in, out)
+func (h *identityHandler) Auth(ctx context.Context, in *User, out *Token) error {
+	return h.IdentityHandler.Auth(ctx, in, out)
 }
 
-func (h *identityServiceHandler) ValidateToken(ctx context.Context, in *Token, out *Token) error {
-	return h.IdentityServiceHandler.ValidateToken(ctx, in, out)
+func (h *identityHandler) ValidateToken(ctx context.Context, in *Token, out *Token) error {
+	return h.IdentityHandler.ValidateToken(ctx, in, out)
 }
