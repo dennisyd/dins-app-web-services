@@ -10,19 +10,36 @@ Backend microservices for lasagna
 ## API RPC Routes
 URL:
 ```
-localhost:8080
+localhost:8080/rpc
 ```
 APPLICATION/JSON POST:
 ```json
 {
-	"service":"lasagna.identity.service",
-	"method": "IdentityService.Create",
+	"service":"lasagna.api.identity",
+	"method": "Identity.Create",
 	"request":{
 		"email": "doesitwqork@gmail.com",
-		"password": "passasdasword"
+		"password": "passasdasword",
+		"first_name": "test"
 	}
 }
 ```
+
+### OR
+
+URL:
+```
+localhost:8080/identity/create
+```
+APPLICATION/JSON POST:
+```json
+{
+	"email": "doesitwqork@gmail.com",
+	"password": "passasdasword",
+	"first_name": "test"
+}
+```
+
 
 ## Stats
 View live stats at
