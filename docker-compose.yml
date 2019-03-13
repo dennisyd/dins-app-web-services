@@ -10,7 +10,7 @@ services:
     environment:
       MICRO_ADDRESS: ":50051"
       MICRO_REGISTRY: "mdns"
-  database:
+  identity-database:
     image: postgres:alpine
     ports:
       - 127.0.0.1:5432:5432
@@ -26,13 +26,14 @@ services:
     environment:
       MICRO_ADDRESS: ":50051"
       MICRO_REGISTRY: "mdns"
-      DB_HOST: "database"
+      DB_HOST: "identity-database"
+      DB_PORT: "5432"
       DB_USER: "postgres"
       DB_NAME: "users"
       DB_PASSWORD: "supersecretpassword"
       JWT_SECRET: "supersecret"
     depends_on:
-      - database
+      - identity-database
   api-gateway:
     image: microhq/micro
     ports:

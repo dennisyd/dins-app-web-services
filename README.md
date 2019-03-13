@@ -1,5 +1,5 @@
-# lasagna-msa
-Backend microservices for lasagna
+# web-service
+Backend microservices for dins.app
 
 * Identity service (Login/Signup/3rd party Oauth)
 * Internal Recipe Service (CRUD recipes in our database)
@@ -15,7 +15,7 @@ localhost:8080/rpc
 APPLICATION/JSON POST:
 ```json
 {
-	"service":"lasagna.api.identity",
+	"service":"dins.app.api.v1.identity",
 	"method": "Identity.Create",
 	"request":{
 		"email": "doesitwqork@gmail.com",
