@@ -6,9 +6,9 @@ services:
     image: edwincloud/internal-recipes-service
     ports:
       - target: 50051
-      published: 50051
-      protocol: tcp
-      mode: host
+        published: 50051
+        protocol: tcp
+        mode: host
     deploy:
       replicas: 1
     environment:
@@ -18,9 +18,9 @@ services:
     image: postgres:alpine
     ports:
       - target: 5432
-      published: 5432
-      protocol: tcp
-      mode: host
+        published: 5432
+        protocol: tcp
+        mode: host
     deploy:
       replicas: 1
     environment:
@@ -31,9 +31,9 @@ services:
     image: edwincloud/identity-service
     ports:
       - target: 50051
-      published: 50052
-      protocol: tcp
-      mode: host
+        published: 50052
+        protocol: tcp
+        mode: host
     deploy:
       replicas: 1
     environment:
@@ -51,9 +51,9 @@ services:
     image: microhq/micro
     ports:
       - target: 8080
-      published: 80
-      protocol: tcp
-      mode: ingress
+        published: 80
+        protocol: tcp
+        mode: ingress
     command: api
     deploy:
       replicas: 1
