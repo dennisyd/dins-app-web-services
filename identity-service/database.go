@@ -16,11 +16,11 @@ func CreateConnection() (*gorm.DB, error) {
 		fmt.Sprintf(
 			"host=%s port=%s user=%s "+
 				"password=%s dbname=%s sslmode=disable",
-			os.Getenv("DB_HOST"),
-			os.Getenv("DB_PORT"),
-			os.Getenv("DB_USER"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_NAME"),
+			os.Getenv("IDENTITY_DB_HOST"),
+			os.Getenv("IDENTITY_DB_PORT"),
+			os.Getenv("IDENTITY_DB_USER"),
+			os.Getenv("IDENTITY_DB_PASSWORD"),
+			os.Getenv("IDENTITY_DB_NAME"),
 		),
 	)
 }
