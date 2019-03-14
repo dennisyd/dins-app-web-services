@@ -11,7 +11,7 @@ services:
     deploy:
       replicas: 1
     environment:
-      SERVICE_ADDRESS: "internal-recipes-service:50051"
+      SERVICE_ADDRESS: "50051"
     networks:
       - my_net
   # identity-database:
@@ -63,4 +63,5 @@ services:
       - my_net
 
 networks:
-  my_net: 
+  my_net:
+    - driver: overlay
