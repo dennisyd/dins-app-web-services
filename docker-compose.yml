@@ -1,44 +1,55 @@
 version: "3.7"
 
 services:
+  consul:
+    command: -server -bootstrap -rejoin 
+    image: progrium/consul:latest
+    ports:
+      - "8300:8300"
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:53/udp"
+    networks:
+      - my_net
   internal-recipes-service:
     build: ./internal-recipes-service
     image: edwincloud/internal-recipes-service
     ports:
-      - target: 50051
-        published: 50051
-        protocol: tcp
-        mode: host
+      - "8081:8081"
     deploy:
       replicas: 1
     environment:
-      MICRO_ADDRESS: ":50051"
-      MICRO_REGISTRY: "mdns"
+      MICRO_REGISTRY: "consul"
+      MICRO_REGISTRY_ADDRESS: "consul:8500"
+      MICRO_REGISTER_TTL: "10"
+      MICRO_REGISTER_INTERVAL: "5"
+    networks:
+      - my_net
+    depends_on:
+      - consul
   identity-database:
     image: postgres:alpine
     ports:
-      - target: 5432
-        published: 5432
-        protocol: tcp
-        mode: host
+      - "5432:5432"
     deploy:
       replicas: 1
     environment:
       POSTGRES_PASSWORD: "supersecretpassword"
       POSTGRES_DB: "users"
+    networks:
+      - my_net
   identity-service:
     build: ./identity-service
     image: edwincloud/identity-service
     ports:
-      - target: 50051
-        published: 50052
-        protocol: tcp
-        mode: host
+      - "8082:8082"
     deploy:
       replicas: 1
     environment:
-      MICRO_ADDRESS: ":50051"
-      MICRO_REGISTRY: "mdns"
+      MICRO_REGISTRY: "consul"
+      MICRO_REGISTRY_ADDRESS: "consul:8500"
+      MICRO_REGISTER_TTL: "10"
+      MICRO_REGISTER_INTERVAL: "5"
       DB_HOST: "identity-database"
       DB_PORT: "5432"
       DB_USER: "postgres"
@@ -47,23 +58,32 @@ services:
       JWT_SECRET: "supersecret"
     depends_on:
       - identity-database
+      - consul
+    networks:
+      - my_net
   api-gateway:
     image: microhq/micro
     ports:
-      - target: 8080
-        published: 80
-        protocol: tcp
-        mode: ingress
+      - "8080:8080"
     command: api
     deploy:
       replicas: 1
     environment:
-      MICRO_REGISTRY: "mdns"
-      MICRO_ADDRESS: ":50051"
-      MICRO_API_NAMESPACE: "dins.app.api"
+      MICRO_REGISTRY: "consul"
+      MICRO_REGISTRY_ADDRESS: "consul:8500"
+      MICRO_REGISTER_TTL: " 10"
+      MICRO_REGISTER_INTERVAL: "5"
+      MICRO_API_NAMESPACE: "dins-app-api"
       MICRO_API_HANDLER: "rpc"
-      MICRO_API_ADDRESS: "0.0.0.0:8080"
+      MICRO_API_RESOLVER: "grpc"
+      MICRO_API_ADDRESS: ":8080"
       MICRO_ENABLE_STATS: "true"
     depends_on:
       - internal-recipes-service
       - identity-service
+      - consul
+    networks:
+      - my_net
+
+networks:
+  my_net: 

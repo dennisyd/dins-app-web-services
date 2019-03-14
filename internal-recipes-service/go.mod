@@ -3,7 +3,8 @@ module github.com/dins-app/web-services/internal-recipes-service
 go 1.12
 
 require (
-	github.com/gogo/protobuf v1.2.1 // indirect
+	github.com/gogo/protobuf v1.2.1
+	github.com/golang/protobuf v1.2.0
 	github.com/hashicorp/go-cleanhttp v0.5.0 // indirect
 	github.com/hashicorp/go-rootcerts v1.0.0 // indirect
 	github.com/hashicorp/serf v0.8.2 // indirect
