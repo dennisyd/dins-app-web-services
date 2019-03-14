@@ -8,16 +8,18 @@ services:
       - 50051:50051
     deploy:
       replicas: 1
-    env_file:
-      - .env
+    environment:
+      MICRO_ADDRESS: ":50051"
+      MICRO_REGISTRY: "mdns"
   identity-database:
     image: postgres:alpine
     ports:
       - 5432:5432
     deploy:
       replicas: 1
-    env_file:
-      - .env
+    environment:
+      POSTGRES_PASSWORD: "supersecretpassword"
+      POSTGRES_DB: "users"
   identity-service:
     build: ./identity-service
     image: edwincloud/identity-service
@@ -25,8 +27,15 @@ services:
       - 50052:50051
     deploy:
       replicas: 1
-    env_file:
-      - .env
+    environment:
+      MICRO_ADDRESS: ":50051"
+      MICRO_REGISTRY: "mdns"
+      DB_HOST: "identity-database"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+      DB_NAME: "users"
+      DB_PASSWORD: "supersecretpassword"
+      JWT_SECRET: "supersecret"
     depends_on:
       - identity-database
   api-gateway:
@@ -36,8 +45,13 @@ services:
     command: api
     deploy:
       replicas: 1
-    env_file:
-      - .env
+    environment:
+      MICRO_REGISTRY: "mdns"
+      MICRO_ADDRESS: ":50051"
+      MICRO_API_NAMESPACE: "dins.app.api"
+      MICRO_API_HANDLER: "rpc"
+      MICRO_API_ADDRESS: "0.0.0.0:8080"
+      MICRO_ENABLE_STATS: "true"
     depends_on:
       - internal-recipes-service
       - identity-service
