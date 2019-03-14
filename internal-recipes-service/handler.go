@@ -2,19 +2,23 @@ package main
 
 import (
 	"context"
+	"log"
 
 	pb "github.com/dins-app/web-services/proto/internal-recipes-service"
 )
 
-type handler struct{}
+type Handler struct{}
 
-func (h *Handler) Create(ctx context.Context, r *pb.Recipe) (res *pb.Response, err error) {
+func (h *Handler) Create(ctx context.Context, r *pb.Recipe) (*pb.Response, error) {
+	res := pb.Response{}
 	res.Created = true
 	res.Recipe = r
-	return res, err
+	log.Print("Received request")
+	return &res, nil
 }
 
-func (h *Handler) Get(ctx context.Context, req *pb.Request) (res *pb.Response, err error) {
+func (h *Handler) Get(ctx context.Context, req *pb.Request) (*pb.Response, error) {
+	res := pb.Response{}
 	recipes := []*pb.Recipe{
 		&pb.Recipe{
 			Name:        "test",
@@ -22,5 +26,6 @@ func (h *Handler) Get(ctx context.Context, req *pb.Request) (res *pb.Response, e
 		},
 	}
 	res.Recipes = recipes
-	return res, err
+	log.Print("Received request")
+	return &res, nil
 }

@@ -1,88 +1,64 @@
 version: "3.7"
 
 services:
-  consul:
-    command: -server -bootstrap -rejoin 
-    image: progrium/consul:latest
-    ports:
-      - "8300:8300"
-      - "8400:8400"
-      - "8500:8500"
-      - "8600:53/udp"
-    networks:
-      - my_net
   internal-recipes-service:
-    build: ./internal-recipes-service
+    build:
+      context: .
+      dockerfile: ./internal-recipes-service/Dockerfile
     image: edwincloud/internal-recipes-service
     ports:
-      - "8081:8081"
+      - "50051:50051"
     deploy:
       replicas: 1
     environment:
-      MICRO_REGISTRY: "consul"
-      MICRO_REGISTRY_ADDRESS: "consul:8500"
-      MICRO_REGISTER_TTL: "10"
-      MICRO_REGISTER_INTERVAL: "5"
+      SERVICE_ADDRESS: "127.0.0.1:50051"
     networks:
       - my_net
-    depends_on:
-      - consul
-  identity-database:
-    image: postgres:alpine
+  # identity-database:
+  #   image: postgres:alpine
+  #   ports:
+  #     - "5432:5432"
+  #   deploy:
+  #     replicas: 1
+  #   environment:
+  #     POSTGRES_PASSWORD: "supersecretpassword"
+  #     POSTGRES_DB: "users"
+  #   networks:
+  #     - my_net
+  # identity-service:
+  #   build:
+  #     context: .
+  #     dockerfile: ./identity-service/Dockerfile
+  #   image: edwincloud/identity-service
+  #   ports:
+  #     - "50052:50052"
+  #   deploy:
+  #     replicas: 1
+  #   environment:
+  #     SERVICE_ADDRESS: "127.0.0.1:50052"
+  #     DB_HOST: "identity-database"
+  #     DB_PORT: "5432"
+  #     DB_USER: "postgres"
+  #     DB_NAME: "users"
+  #     DB_PASSWORD: "supersecretpassword"
+  #     JWT_SECRET: "supersecret"
+  #   depends_on:
+  #     - identity-database
+  #   networks:
+  #     - my_net
+  api-service:
+    build:
+      context: .
+      dockerfile: ./api-service/Dockerfile
+    image: edwincloud/api-service
     ports:
-      - "5432:5432"
+      - "80:8080"
     deploy:
       replicas: 1
     environment:
-      POSTGRES_PASSWORD: "supersecretpassword"
-      POSTGRES_DB: "users"
-    networks:
-      - my_net
-  identity-service:
-    build: ./identity-service
-    image: edwincloud/identity-service
-    ports:
-      - "8082:8082"
-    deploy:
-      replicas: 1
-    environment:
-      MICRO_REGISTRY: "consul"
-      MICRO_REGISTRY_ADDRESS: "consul:8500"
-      MICRO_REGISTER_TTL: "10"
-      MICRO_REGISTER_INTERVAL: "5"
-      DB_HOST: "identity-database"
-      DB_PORT: "5432"
-      DB_USER: "postgres"
-      DB_NAME: "users"
-      DB_PASSWORD: "supersecretpassword"
-      JWT_SECRET: "supersecret"
-    depends_on:
-      - identity-database
-      - consul
-    networks:
-      - my_net
-  api-gateway:
-    image: microhq/micro
-    ports:
-      - "8080:8080"
-    command: api
-    deploy:
-      replicas: 1
-    environment:
-      MICRO_REGISTRY: "consul"
-      MICRO_REGISTRY_ADDRESS: "consul:8500"
-      MICRO_REGISTER_TTL: " 10"
-      MICRO_REGISTER_INTERVAL: "5"
-      MICRO_API_NAMESPACE: "dins-app-api"
-      MICRO_API_HANDLER: "rpc"
-      MICRO_API_RESOLVER: "grpc"
-      MICRO_API_ADDRESS: ":8080"
-      MICRO_SERVER_NAME: "go-micro-api"
-      MICRO_ENABLE_STATS: "true"
+      RECIPES_SERVICE_ADDRESS: "127.0.0.1:50051"
     depends_on:
       - internal-recipes-service
-      - identity-service
-      - consul
     networks:
       - my_net
 

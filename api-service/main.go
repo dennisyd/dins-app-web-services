@@ -4,20 +4,25 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	recipesPb "github.com/dins-app/web-services/proto/internal-recipes-service"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"google.golang.org/grpc"
 )
 
-const (
-	recipesAddr = "localhost:50051"
-)
-
 var (
+	recipesAddr   = "localhost:50051"
 	recipesClient recipesPb.RecipesClient
 )
+
+func init() {
+	if v, ok := os.LookupEnv("RECIPES_SERVICE_ADDRESS"); ok {
+		recipesAddr = v
+	}
+}
 
 func main() {
 
@@ -27,6 +32,11 @@ func main() {
 
 	// create new instance of echo server
 	e := echo.New()
+
+	// register logging middleware
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "${method}  ${uri}  ${latency_human}  ${status}\n",
+	}))
 
 	// register / GET route
 	e.GET("/", func(c echo.Context) error {
@@ -50,7 +60,7 @@ func connectRecipesServer() *grpc.ClientConn {
 
 	// register client
 	recipesClient = recipesPb.NewRecipesClient(conn)
-
+	log.Println("Connected")
 	return conn
 }
 
