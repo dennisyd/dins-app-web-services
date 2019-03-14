@@ -11,7 +11,7 @@ services:
     deploy:
       replicas: 1
     environment:
-      SERVICE_ADDRESS: "127.0.0.1:50051"
+      SERVICE_ADDRESS: "internal-recipes-service:50051"
     networks:
       - my_net
   # identity-database:
@@ -56,7 +56,7 @@ services:
     deploy:
       replicas: 1
     environment:
-      RECIPES_SERVICE_ADDRESS: "127.0.0.1:50051"
+      RECIPES_SERVICE_ADDRESS: "internal-recipes-service:50051"
     depends_on:
       - internal-recipes-service
     networks:

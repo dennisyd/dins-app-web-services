@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
+	"os"
 	"time"
 
 	pb "github.com/dins-app/web-services/proto/internal-recipes-service"
@@ -11,12 +11,18 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
-const (
-	port = ":50051"
+var (
+	address = "127.0.0.1:50051"
 )
 
+func init() {
+	if v, ok := os.LookupEnv("SERVICE_ADDRESS"); ok {
+		address = v
+	}
+}
+
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost%s", port))
+	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

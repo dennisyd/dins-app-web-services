@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -60,7 +61,7 @@ func connectRecipesServer() *grpc.ClientConn {
 
 	// register client
 	recipesClient = recipesPb.NewRecipesClient(conn)
-	log.Println("Connected")
+	log.Println("Connected", recipesAddr)
 	return conn
 }
 
@@ -70,9 +71,10 @@ func getRecipe(c echo.Context) error {
 
 	r, err := recipesClient.Get(ctx, &recipesPb.Request{})
 	if err != nil {
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"Status": "500",
-			"Error":  "Unable to get recipes",
+			"Error":  fmt.Sprintf("Unable to get recipes: %s", err),
 		})
 	}
 
