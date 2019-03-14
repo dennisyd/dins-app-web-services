@@ -4,6 +4,7 @@ RUN mkdir -p /web-services/identity-service
 WORKDIR /web-services
 COPY go.mod .
 COPY go.sum .
+COPY proto proto
 
 RUN apk update && apk add --update --no-cache ca-certificates git
 
