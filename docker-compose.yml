@@ -1,9 +1,5 @@
 version: "3.7"
 
-configs:
-  cluster_config:
-    file: ./.env
-
 services:
   internal-recipes-service:
     build: ./internal-recipes-service
@@ -12,16 +8,16 @@ services:
       - 50051:50051
     deploy:
       replicas: 1
-    configs:
-      - cluster_config
+    env_file:
+      - .env
   identity-database:
     image: postgres:alpine
     ports:
       - 5432:5432
     deploy:
       replicas: 1
-    configs:
-      - cluster_config
+    env_file:
+      - .env
   identity-service:
     build: ./identity-service
     image: edwincloud/identity-service
@@ -29,8 +25,8 @@ services:
       - 50052:50051
     deploy:
       replicas: 1
-    configs:
-      - cluster_config
+    env_file:
+      - .env
     depends_on:
       - identity-database
   api-gateway:
@@ -40,8 +36,8 @@ services:
     command: api
     deploy:
       replicas: 1
-    configs:
-      - cluster_config
+    env_file:
+      - .env
     depends_on:
       - internal-recipes-service
       - identity-service
