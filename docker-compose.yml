@@ -1,51 +1,47 @@
 version: "3.7"
 
+configs:
+  cluster_config:
+    file: ./.env
+
 services:
   internal-recipes-service:
-    build:
-      context: .
-      dockerfile: ./internal-recipes-service/Dockerfile
+    build: ./internal-recipes-service
+    image: edwincloud/internal-recipes-service
     ports:
       - 50051:50051
-    environment:
-      MICRO_ADDRESS: ":50051"
-      MICRO_REGISTRY: "mdns"
+    deploy:
+      replicas: 1
+    configs:
+      - cluster_config
   identity-database:
     image: postgres:alpine
     ports:
-      - 127.0.0.1:5432:5432
-    environment:
-      POSTGRES_PASSWORD: "supersecretpassword"
-      POSTGRES_DB: "users"
+      - 5432:5432
+    deploy:
+      replicas: 1
+    configs:
+      - cluster_config
   identity-service:
-    build:
-      context: .
-      dockerfile: ./identity-service/Dockerfile
+    build: ./identity-service
+    image: edwincloud/identity-service
     ports:
       - 50052:50051
-    environment:
-      MICRO_ADDRESS: ":50051"
-      MICRO_REGISTRY: "mdns"
-      DB_HOST: "identity-database"
-      DB_PORT: "5432"
-      DB_USER: "postgres"
-      DB_NAME: "users"
-      DB_PASSWORD: "supersecretpassword"
-      JWT_SECRET: "supersecret"
+    deploy:
+      replicas: 1
+    configs:
+      - cluster_config
     depends_on:
       - identity-database
   api-gateway:
     image: microhq/micro
     ports:
-      - 127.0.0.1:8080:8080
+      - 8080:8080
     command: api
-    environment:
-      MICRO_REGISTRY: "mdns"
-      MICRO_ADDRESS: ":50051"
-      MICRO_API_NAMESPACE: "dins.app.api"
-      MICRO_API_HANDLER: "rpc"
-      MICRO_API_ADDRESS: "0.0.0.0:8080"
-      MICRO_ENABLE_STATS: "true"
+    deploy:
+      replicas: 1
+    configs:
+      - cluster_config
     depends_on:
       - internal-recipes-service
       - identity-service
