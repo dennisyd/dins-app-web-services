@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dins.app.api.v1.recipes;
+package internal_recipes_service;
 
 service Recipes {
     rpc Create(Recipe) returns (Response) {}

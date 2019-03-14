@@ -3,18 +3,18 @@ package main
 import (
 	"context"
 
-	pb "github.com/team-morpheus/lasagna-msa/internal-recipes-service/proto"
+	pb "github.com/dins-app/web-services/proto/internal-recipes-service"
 )
 
 type handler struct{}
 
-func (h *handler) Create(ctx context.Context, r *pb.Recipe, res *pb.Response) error {
+func (h *handler) Create(ctx context.Context, r *pb.Recipe) (res *pb.Response, err error) {
 	res.Created = true
 	res.Recipe = r
-	return nil
+	return res, err
 }
 
-func (h *handler) Get(ctx context.Context, req *pb.Request, res *pb.Response) error {
+func (h *handler) Get(ctx context.Context, req *pb.Request) (res *pb.Response, err error) {
 	recipes := []*pb.Recipe{
 		&pb.Recipe{
 			Name:        "test",
@@ -22,5 +22,5 @@ func (h *handler) Get(ctx context.Context, req *pb.Request, res *pb.Response) er
 		},
 	}
 	res.Recipes = recipes
-	return nil
+	return res, err
 }

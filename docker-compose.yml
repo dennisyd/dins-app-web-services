@@ -77,6 +77,7 @@ services:
       MICRO_API_HANDLER: "rpc"
       MICRO_API_RESOLVER: "grpc"
       MICRO_API_ADDRESS: ":8080"
+      MICRO_SERVER_NAME: "go-micro-api"
       MICRO_ENABLE_STATS: "true"
     depends_on:
       - internal-recipes-service

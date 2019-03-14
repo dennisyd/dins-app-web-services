@@ -4,11 +4,13 @@
 package dins_app_api_v1_identity
 
 import (
+	context "context"
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 	proto "github.com/gogo/protobuf/proto"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
+	grpc "google.golang.org/grpc"
 	io "io"
 	math "math"
 	reflect "reflect"
@@ -779,6 +781,211 @@ func valueToGoStringIdentityService(v interface{}, typ string) string {
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
 }
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// IdentityClient is the client API for Identity service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type IdentityClient interface {
+	Create(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
+	Get(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
+	GetAll(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	Auth(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error)
+	ValidateToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Token, error)
+}
+
+type identityClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewIdentityClient(cc *grpc.ClientConn) IdentityClient {
+	return &identityClient{cc}
+}
+
+func (c *identityClient) Create(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/dins.app.api.v1.identity.Identity/Create", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityClient) Get(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/dins.app.api.v1.identity.Identity/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityClient) GetAll(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/dins.app.api.v1.identity.Identity/GetAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityClient) Auth(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error) {
+	out := new(Token)
+	err := c.cc.Invoke(ctx, "/dins.app.api.v1.identity.Identity/Auth", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityClient) ValidateToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Token, error) {
+	out := new(Token)
+	err := c.cc.Invoke(ctx, "/dins.app.api.v1.identity.Identity/ValidateToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// IdentityServer is the server API for Identity service.
+type IdentityServer interface {
+	Create(context.Context, *User) (*Response, error)
+	Get(context.Context, *User) (*Response, error)
+	GetAll(context.Context, *Request) (*Response, error)
+	Auth(context.Context, *User) (*Token, error)
+	ValidateToken(context.Context, *Token) (*Token, error)
+}
+
+func RegisterIdentityServer(s *grpc.Server, srv IdentityServer) {
+	s.RegisterService(&_Identity_serviceDesc, srv)
+}
+
+func _Identity_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dins.app.api.v1.identity.Identity/Create",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServer).Create(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Identity_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dins.app.api.v1.identity.Identity/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServer).Get(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Identity_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServer).GetAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dins.app.api.v1.identity.Identity/GetAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServer).GetAll(ctx, req.(*Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Identity_Auth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServer).Auth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dins.app.api.v1.identity.Identity/Auth",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServer).Auth(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Identity_ValidateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Token)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServer).ValidateToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dins.app.api.v1.identity.Identity/ValidateToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServer).ValidateToken(ctx, req.(*Token))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Identity_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "dins.app.api.v1.identity.Identity",
+	HandlerType: (*IdentityServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _Identity_Create_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _Identity_Get_Handler,
+		},
+		{
+			MethodName: "GetAll",
+			Handler:    _Identity_GetAll_Handler,
+		},
+		{
+			MethodName: "Auth",
+			Handler:    _Identity_Auth_Handler,
+		},
+		{
+			MethodName: "ValidateToken",
+			Handler:    _Identity_ValidateToken_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "identity-service.proto",
+}
+
 func (m *User) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
