@@ -14,6 +14,10 @@ services:
         condition: on-failure
     environment:
       SERVICE_ADDRESS: ":50051"
+      DB_HOST: "recipes-db"
+      DB_NAME: "recipes"
+      DB_USER: "root"
+      DB_PASSWORD: "secretpassword"
     networks:
       - my_net
     depends_on:
