@@ -13,13 +13,14 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      SERVICE_ADDRESS: "50051"
+      SERVICE_ADDRESS: ":50051"
     networks:
       - my_net
     depends_on:
       - recipes-db
   recipes-db:
     image: mariadb:latest
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
     volumes:
       - recipes-data:/var/lib/mysql
     ports:
@@ -30,9 +31,7 @@ services:
         constraints: [node.role == manager]
     environment:
       MYSQL_ROOT_PASSWORD: "secretpassword"
-      MYSQL_DATABASE: "recipes"
-      MYSQL_USER: "mysql"
-      MYSQL_PASSWORD: "password"
+      MYSQL_DATABASE: "recipes"   
     networks:
       - my_net
   api-service:
