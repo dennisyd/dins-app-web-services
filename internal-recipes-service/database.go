@@ -10,9 +10,11 @@ import (
 )
 
 var (
+	// DB is the package global db connection
 	DB *gorm.DB
 )
 
+// ConnectDB connects to mysql db
 func ConnectDB() {
 	var err error
 

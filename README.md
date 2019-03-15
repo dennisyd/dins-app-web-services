@@ -1,48 +1,36 @@
-# web-service
+# web-services
 Backend microservices for dins.app
 
-* Identity service (Login/Signup/3rd party Oauth)
+* Identity Service (Login/Signup/3rd party Oauth)
 * Internal Recipe Service (CRUD recipes in our database)
 * External Recipe Service (Queries external services for data and returns data to client; for example, add a recipe from a url — would scrape info from the url and return)
 * Recommendation Service (Takes a user id and gets user info from identity service, then uses user preferences to query internal recipe service for weighted results)
+* Api Service (Exposes a REST api of available enpoints to interact with gRPC services above)
+  + GET `/v1/recipes` -> Get all recipes from the database
+  + POST `/v1/recipes` -> Create a new recipe in the database
 
 
-## API RPC Routes
-URL:
-```
-localhost:8080/rpc
-```
-APPLICATION/JSON POST:
-```json
-{
-	"service":"dins.app.api.v1.identity",
-	"method": "Identity.Create",
-	"request":{
-		"email": "doesitwqork@gmail.com",
-		"password": "passasdasword",
-		"first_name": "test"
-	}
-}
+## Getting Started
+* Docker and docker-compose is required for development. Get Docker [here](https://www.docker.com/get-started).
+
+To develop locally simply clone the repo and run the following commands to start the services:
+```bash
+docker swarm init    # to make your current machine a swarm manager
+docker-compose build # builds the services stack
+docker-compose up    # starts the services, use -d flag to run in background
 ```
 
-### OR
-
-URL:
-```
-localhost:8080/identity/create
-```
-APPLICATION/JSON POST:
-```json
-{
-	"email": "doesitwqork@gmail.com",
-	"password": "passasdasword",
-	"first_name": "test"
-}
+To bring down the services:
+```bash
+docker-compose down
 ```
 
-
-## Stats
-View live stats at
+To deploy using stack deployment (will pull images from docker repo instead of building):
+```bash
+docker stack deploy --compose-file=my_config.yml
 ```
-localhost:8080/stats
+
+If you have access to push images to the repo, you can push new builds like so:
+```bash
+docker-compose push
 ```

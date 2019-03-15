@@ -6,18 +6,17 @@ package internal_recipes_service
 import (
 	context "context"
 	fmt "fmt"
-	io "io"
-	math "math"
-	reflect "reflect"
-	strings "strings"
-	time "time"
-
 	_ "github.com/gogo/protobuf/gogoproto"
 	github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 	proto "github.com/gogo/protobuf/proto"
 	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	grpc "google.golang.org/grpc"
+	io "io"
+	math "math"
+	reflect "reflect"
+	strings "strings"
+	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
