@@ -44,8 +44,11 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	// register /recipe GET route
-	e.GET("/recipe", getRecipe)
+	// register /recipes GET route
+	e.GET("/v1/recipes", getRecipe)
+
+	// register /recipes POST route
+	e.POST("/v1/recipes", createRecipe)
 
 	// start http server
 	e.Logger.Fatal(e.Start(":8080"))
@@ -78,5 +81,32 @@ func getRecipe(c echo.Context) error {
 		})
 	}
 
-	return c.JSON(200, r.Recipes)
+	return c.JSON(200, r)
+}
+
+func createRecipe(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	recipe := recipesPb.Recipe{}
+
+	err := c.Bind(&recipe)
+	if err != nil {
+		log.Println(err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"Status": "500",
+			"Error":  fmt.Sprintf("Unable to create recipe: %s", err),
+		})
+	}
+
+	r, err := recipesClient.Create(ctx, &recipe)
+	if err != nil {
+		log.Println(err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"Status": "500",
+			"Error":  fmt.Sprintf("Unable to get recipes: %s", err),
+		})
+	}
+
+	return c.JSON(200, r)
 }

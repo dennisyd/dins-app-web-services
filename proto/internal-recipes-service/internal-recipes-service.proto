@@ -26,16 +26,11 @@ message Recipe {
 message Response {
     optional Recipe recipe = 1;
     repeated Recipe recipes = 2;
-    repeated Error errors = 3;
+    repeated string errors = 3;
 }
 
 message Request {
     map<string, string> query = 1;
-}
-
-message Error {
-    optional int32 code = 1;
-    optional string description = 2;
 }
 
 message Timestamp {
