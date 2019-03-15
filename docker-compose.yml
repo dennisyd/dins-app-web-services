@@ -10,42 +10,31 @@ services:
       - "50051:50051"
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
     environment:
       SERVICE_ADDRESS: "50051"
     networks:
       - my_net
-  # identity-database:
-  #   image: postgres:alpine
-  #   ports:
-  #     - "5432:5432"
-  #   deploy:
-  #     replicas: 1
-  #   environment:
-  #     POSTGRES_PASSWORD: "supersecretpassword"
-  #     POSTGRES_DB: "users"
-  #   networks:
-  #     - my_net
-  # identity-service:
-  #   build:
-  #     context: .
-  #     dockerfile: ./identity-service/Dockerfile
-  #   image: edwincloud/identity-service
-  #   ports:
-  #     - "50052:50052"
-  #   deploy:
-  #     replicas: 1
-  #   environment:
-  #     SERVICE_ADDRESS: "127.0.0.1:50052"
-  #     DB_HOST: "identity-database"
-  #     DB_PORT: "5432"
-  #     DB_USER: "postgres"
-  #     DB_NAME: "users"
-  #     DB_PASSWORD: "supersecretpassword"
-  #     JWT_SECRET: "supersecret"
-  #   depends_on:
-  #     - identity-database
-  #   networks:
-  #     - my_net
+    depends_on:
+      - recipes-db
+  recipes-db:
+    image: mariadb:latest
+    volumes:
+      - recipes-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    environment:
+      MYSQL_ROOT_PASSWORD: "secretpassword"
+      MYSQL_DATABASE: "recipes"
+      MYSQL_USER: "mysql"
+      MYSQL_PASSWORD: "password"
+    networks:
+      - my_net
   api-service:
     build:
       context: .
@@ -55,6 +44,8 @@ services:
       - "80:8080"
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
     environment:
       RECIPES_SERVICE_ADDRESS: "internal-recipes-service:50051"
     depends_on:
@@ -64,4 +55,7 @@ services:
 
 networks:
   my_net:
-    - driver: overlay
+    driver: overlay
+
+volumes:
+  recipes-data:
