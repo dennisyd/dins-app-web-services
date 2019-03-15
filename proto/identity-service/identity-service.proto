@@ -6,10 +6,8 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 service Identity {
     rpc Create(User) returns (Response) {}
-    rpc Get(User) returns (Response) {}
-    rpc GetAll(Request) returns (Response) {}
-    rpc Auth(User) returns (Token) {}
-    rpc ValidateToken(Token) returns (Token) {}
+    rpc Get(Request) returns (Response) {}
+    rpc Auth(User) returns (Response) {}
 }
 
 message User {
@@ -28,21 +26,12 @@ message User {
 message Response {
     optional User user = 1;
     repeated User users = 2;
-    repeated Error errors = 3;
-    optional Token token = 4;
+    repeated string errors = 3;
+    optional string token = 4;
 }
 
-message Request {}
-
-message Token {
-    optional string token = 1;
-    optional bool valid = 2;
-    repeated Error errors = 3;
-}
-
-message Error {
-    optional int32 code = 1;
-    optional string description = 2;
+message Request {
+    map<string, string> query = 1;
 }
 
 message Timestamp {

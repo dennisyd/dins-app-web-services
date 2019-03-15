@@ -9,6 +9,7 @@ import (
 	_ "github.com/gogo/protobuf/gogoproto"
 	github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	grpc "google.golang.org/grpc"
 	io "io"
@@ -148,8 +149,8 @@ func (m *User) GetUpdatedAt() *time.Time {
 type Response struct {
 	User   *User    `protobuf:"bytes,1,opt,name=user" json:"user,omitempty"`
 	Users  []*User  `protobuf:"bytes,2,rep,name=users" json:"users,omitempty"`
-	Errors []*Error `protobuf:"bytes,3,rep,name=errors" json:"errors,omitempty"`
-	Token  *Token   `protobuf:"bytes,4,opt,name=token" json:"token,omitempty"`
+	Errors []string `protobuf:"bytes,3,rep,name=errors" json:"errors,omitempty"`
+	Token  string   `protobuf:"bytes,4,opt,name=token" json:"token"`
 }
 
 func (m *Response) Reset()      { *m = Response{} }
@@ -198,21 +199,22 @@ func (m *Response) GetUsers() []*User {
 	return nil
 }
 
-func (m *Response) GetErrors() []*Error {
+func (m *Response) GetErrors() []string {
 	if m != nil {
 		return m.Errors
 	}
 	return nil
 }
 
-func (m *Response) GetToken() *Token {
+func (m *Response) GetToken() string {
 	if m != nil {
 		return m.Token
 	}
-	return nil
+	return ""
 }
 
 type Request struct {
+	Query map[string]string `protobuf:"bytes,1,rep,name=query" json:"query,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
 func (m *Request) Reset()      { *m = Request{} }
@@ -247,114 +249,11 @@ func (m *Request) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Request proto.InternalMessageInfo
 
-type Token struct {
-	Token  string   `protobuf:"bytes,1,opt,name=token" json:"token"`
-	Valid  bool     `protobuf:"varint,2,opt,name=valid" json:"valid"`
-	Errors []*Error `protobuf:"bytes,3,rep,name=errors" json:"errors,omitempty"`
-}
-
-func (m *Token) Reset()      { *m = Token{} }
-func (*Token) ProtoMessage() {}
-func (*Token) Descriptor() ([]byte, []int) {
-	return fileDescriptor_907d264d7d28164d, []int{3}
-}
-func (m *Token) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Token) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Token.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *Token) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Token.Merge(m, src)
-}
-func (m *Token) XXX_Size() int {
-	return m.Size()
-}
-func (m *Token) XXX_DiscardUnknown() {
-	xxx_messageInfo_Token.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Token proto.InternalMessageInfo
-
-func (m *Token) GetToken() string {
+func (m *Request) GetQuery() map[string]string {
 	if m != nil {
-		return m.Token
-	}
-	return ""
-}
-
-func (m *Token) GetValid() bool {
-	if m != nil {
-		return m.Valid
-	}
-	return false
-}
-
-func (m *Token) GetErrors() []*Error {
-	if m != nil {
-		return m.Errors
+		return m.Query
 	}
 	return nil
-}
-
-type Error struct {
-	Code        int32  `protobuf:"varint,1,opt,name=code" json:"code"`
-	Description string `protobuf:"bytes,2,opt,name=description" json:"description"`
-}
-
-func (m *Error) Reset()      { *m = Error{} }
-func (*Error) ProtoMessage() {}
-func (*Error) Descriptor() ([]byte, []int) {
-	return fileDescriptor_907d264d7d28164d, []int{4}
-}
-func (m *Error) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Error) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Error.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *Error) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Error.Merge(m, src)
-}
-func (m *Error) XXX_Size() int {
-	return m.Size()
-}
-func (m *Error) XXX_DiscardUnknown() {
-	xxx_messageInfo_Error.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Error proto.InternalMessageInfo
-
-func (m *Error) GetCode() int32 {
-	if m != nil {
-		return m.Code
-	}
-	return 0
-}
-
-func (m *Error) GetDescription() string {
-	if m != nil {
-		return m.Description
-	}
-	return ""
 }
 
 type Timestamp struct {
@@ -372,7 +271,7 @@ type Timestamp struct {
 func (m *Timestamp) Reset()      { *m = Timestamp{} }
 func (*Timestamp) ProtoMessage() {}
 func (*Timestamp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_907d264d7d28164d, []int{5}
+	return fileDescriptor_907d264d7d28164d, []int{3}
 }
 func (m *Timestamp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -419,56 +318,53 @@ func init() {
 	proto.RegisterType((*User)(nil), "identity_service.User")
 	proto.RegisterType((*Response)(nil), "identity_service.Response")
 	proto.RegisterType((*Request)(nil), "identity_service.Request")
-	proto.RegisterType((*Token)(nil), "identity_service.Token")
-	proto.RegisterType((*Error)(nil), "identity_service.Error")
+	proto.RegisterMapType((map[string]string)(nil), "identity_service.Request.QueryEntry")
 	proto.RegisterType((*Timestamp)(nil), "identity_service.Timestamp")
 }
 
 func init() { proto.RegisterFile("identity-service.proto", fileDescriptor_907d264d7d28164d) }
 
 var fileDescriptor_907d264d7d28164d = []byte{
-	// 655 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0xcf, 0x6a, 0xdb, 0x4a,
-	0x14, 0xc6, 0x35, 0xb2, 0xec, 0x58, 0x27, 0x04, 0x2e, 0xb3, 0xc8, 0xd5, 0xf5, 0x0d, 0x63, 0x5f,
-	0x5d, 0x28, 0xa6, 0x24, 0x0e, 0x84, 0x52, 0xe8, 0x1f, 0x4a, 0xed, 0x50, 0x42, 0x36, 0x5d, 0x88,
-	0xb4, 0x5b, 0xa3, 0x58, 0x13, 0x67, 0x88, 0xa4, 0x51, 0x67, 0x46, 0x29, 0xde, 0xf5, 0x11, 0xf2,
-	0x18, 0x7d, 0x90, 0x52, 0x42, 0x57, 0x59, 0x66, 0xe5, 0x36, 0xca, 0xa6, 0x74, 0x15, 0xba, 0xec,
-	0xaa, 0x68, 0x24, 0xa5, 0x26, 0x89, 0xd3, 0x3f, 0x2b, 0x5b, 0xdf, 0xf7, 0x3b, 0xdf, 0x9c, 0x99,
-	0x73, 0x60, 0x99, 0x05, 0x34, 0x56, 0x4c, 0x4d, 0xd6, 0x24, 0x15, 0x87, 0x6c, 0x44, 0x7b, 0x89,
-	0xe0, 0x8a, 0xe3, 0xbf, 0x2a, 0x7d, 0x58, 0xea, 0xad, 0xb5, 0x31, 0x53, 0xfb, 0xe9, 0x6e, 0x6f,
-	0xc4, 0xa3, 0xf5, 0x31, 0x1f, 0xf3, 0x75, 0x0d, 0xee, 0xa6, 0x7b, 0xfa, 0x4b, 0x7f, 0xe8, 0x7f,
-	0x45, 0x80, 0xfb, 0xbe, 0x06, 0xd6, 0x0b, 0x49, 0x05, 0x7e, 0x0c, 0x26, 0x0b, 0x1c, 0xd4, 0x41,
-	0xdd, 0xa5, 0xc1, 0xea, 0xf1, 0xb4, 0x6d, 0x7c, 0x9d, 0xb6, 0x57, 0xc6, 0x5c, 0x44, 0x0f, 0xdd,
-	0x44, 0xb0, 0xc8, 0x17, 0x93, 0xe1, 0x01, 0x9d, 0xac, 0xf2, 0x88, 0x29, 0x1a, 0x25, 0x6a, 0xe2,
-	0x7e, 0x9b, 0xb6, 0xad, 0x94, 0xc5, 0xca, 0x33, 0x59, 0x80, 0x5b, 0x50, 0xa7, 0x91, 0xcf, 0x42,
-	0xc7, 0xec, 0x98, 0x5d, 0x7b, 0x60, 0xe5, 0x01, 0x5e, 0x21, 0xe1, 0xfb, 0xd0, 0x4c, 0x7c, 0x29,
-	0x5f, 0x73, 0x11, 0x38, 0x35, 0x6d, 0xb7, 0x72, 0xfb, 0xcb, 0xb4, 0x8d, 0x2b, 0xfd, 0x47, 0xac,
-	0x77, 0xc9, 0xe2, 0xff, 0x01, 0xf6, 0x98, 0x90, 0x6a, 0x18, 0xfb, 0x11, 0x75, 0xac, 0x99, 0x60,
-	0x5b, 0xeb, 0xcf, 0xfd, 0x88, 0xe2, 0xff, 0xc0, 0x0e, 0xfd, 0x8a, 0xa9, 0xcf, 0x30, 0xcd, 0x5c,
-	0xd6, 0xc8, 0x1d, 0x58, 0x0c, 0xa8, 0x1c, 0x09, 0x96, 0x28, 0xc6, 0x63, 0xa7, 0xd1, 0x41, 0x97,
-	0xd0, 0xac, 0x81, 0x57, 0xa0, 0xb1, 0x9b, 0x06, 0x63, 0xaa, 0x9c, 0x85, 0x19, 0xa4, 0xd4, 0xf2,
-	0x1b, 0xca, 0x03, 0x16, 0x86, 0x4e, 0x73, 0xc6, 0x2c, 0x24, 0xfc, 0x14, 0x60, 0x24, 0xa8, 0xaf,
-	0x68, 0x30, 0xf4, 0x95, 0x63, 0x77, 0x50, 0x77, 0x71, 0xe3, 0xdf, 0xde, 0xd5, 0xd1, 0xf4, 0x76,
-	0x58, 0x44, 0xa5, 0xf2, 0xa3, 0x64, 0x60, 0x1d, 0x7d, 0x6c, 0x23, 0xcf, 0x2e, 0x8b, 0xfa, 0x2a,
-	0x4f, 0x48, 0x93, 0xa0, 0x4a, 0x80, 0x5f, 0x4e, 0x28, 0x8b, 0xfa, 0xca, 0x7d, 0x87, 0xa0, 0xe9,
-	0x51, 0x99, 0xf0, 0x58, 0x52, 0x7c, 0x17, 0xac, 0x54, 0x52, 0xa1, 0xc7, 0xb9, 0xb8, 0xb1, 0x7c,
-	0x3d, 0x28, 0x1f, 0xb9, 0xa7, 0x19, 0xbc, 0x0a, 0xf5, 0xfc, 0x57, 0x3a, 0x66, 0xa7, 0x76, 0x0b,
-	0x5c, 0x40, 0x78, 0x1d, 0x1a, 0x54, 0x08, 0x2e, 0xa4, 0x53, 0xd3, 0xf8, 0xdf, 0xd7, 0xf1, 0x67,
-	0xb9, 0xef, 0x95, 0x18, 0x5e, 0x83, 0xba, 0xe2, 0x07, 0x34, 0x76, 0x2c, 0xdd, 0xcb, 0x0d, 0xfc,
-	0x4e, 0x6e, 0x7b, 0x05, 0xe5, 0xda, 0xb0, 0xe0, 0xd1, 0x57, 0x29, 0x95, 0xca, 0x4d, 0xa0, 0xae,
-	0xad, 0xfc, 0xe9, 0x8b, 0x08, 0x34, 0xfb, 0xf4, 0xaa, 0xf2, 0x0e, 0xfd, 0x90, 0x05, 0x8e, 0xd9,
-	0x41, 0xdd, 0x66, 0xe5, 0x69, 0xe9, 0xb7, 0x7b, 0x75, 0xb7, 0xa1, 0xae, 0x05, 0xec, 0x80, 0x35,
-	0xe2, 0x01, 0xd5, 0x07, 0xd6, 0xcb, 0x50, 0xad, 0x5c, 0x5d, 0x26, 0x73, 0xce, 0x32, 0xb9, 0x5b,
-	0x60, 0x5f, 0x0e, 0x0b, 0x13, 0x58, 0x90, 0x74, 0xc4, 0xe3, 0x40, 0xea, 0xc4, 0x5a, 0x59, 0x50,
-	0x89, 0xf9, 0x25, 0x62, 0x3f, 0xe6, 0x52, 0xc7, 0x55, 0xe7, 0x15, 0xd2, 0xc6, 0x07, 0x13, 0x9a,
-	0xdb, 0x65, 0xdb, 0xf8, 0x09, 0x34, 0x36, 0xf5, 0xce, 0xe0, 0x39, 0x63, 0x6a, 0xb5, 0xae, 0xeb,
-	0xd5, 0x56, 0xb8, 0x06, 0x7e, 0x04, 0xb5, 0x2d, 0xaa, 0xfe, 0xb0, 0xb8, 0x0f, 0x8d, 0x2d, 0xaa,
-	0xfa, 0x61, 0x88, 0xff, 0xb9, 0x89, 0xd3, 0x43, 0xfb, 0x49, 0xc4, 0x03, 0xb0, 0xfa, 0xa9, 0xda,
-	0x9f, 0xdb, 0xc0, 0xbc, 0xed, 0x70, 0x0d, 0xbc, 0x09, 0x4b, 0x2f, 0xf3, 0xa9, 0xfa, 0x8a, 0x16,
-	0x5b, 0x31, 0x8f, 0xbd, 0x25, 0x64, 0x70, 0xef, 0xe4, 0x8c, 0x18, 0xa7, 0x67, 0xc4, 0xb8, 0x38,
-	0x23, 0xe8, 0x4d, 0x46, 0xd0, 0xdb, 0x8c, 0xa0, 0xe3, 0x8c, 0xa0, 0x93, 0x8c, 0xa0, 0x4f, 0x19,
-	0x41, 0x9f, 0x33, 0x62, 0x5c, 0x64, 0x04, 0x1d, 0x9d, 0x13, 0xe3, 0xe4, 0x9c, 0x18, 0xa7, 0xe7,
-	0xc4, 0xf8, 0x1e, 0x00, 0x00, 0xff, 0xff, 0xc3, 0xb8, 0x63, 0x2c, 0x7d, 0x05, 0x00, 0x00,
+	// 616 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x91, 0xcf, 0x6b, 0xd4, 0x40,
+	0x14, 0xc7, 0x33, 0x9b, 0xec, 0x76, 0xf3, 0x8a, 0x20, 0x73, 0x58, 0xe2, 0x5a, 0x66, 0xd7, 0x28,
+	0xb2, 0x48, 0xbb, 0x85, 0x22, 0x22, 0xa5, 0x14, 0xbb, 0x2a, 0xc5, 0x8b, 0x60, 0xd0, 0xf3, 0x92,
+	0x6e, 0xa6, 0xdb, 0x61, 0x37, 0x99, 0x74, 0x66, 0x52, 0xc9, 0xcd, 0xbb, 0x97, 0x1e, 0xfd, 0x13,
+	0xfc, 0x4b, 0xa4, 0xc7, 0x1e, 0x7b, 0x5a, 0x6d, 0x7a, 0x11, 0x4f, 0xc5, 0xa3, 0x27, 0xc9, 0x6c,
+	0xd2, 0x06, 0x6b, 0x55, 0x3c, 0x25, 0xf3, 0x79, 0xdf, 0xf7, 0x7d, 0xbf, 0xa0, 0xc5, 0x02, 0x1a,
+	0x29, 0xa6, 0xd2, 0x15, 0x49, 0xc5, 0x01, 0x1b, 0xd1, 0x7e, 0x2c, 0xb8, 0xe2, 0xf8, 0x66, 0xc9,
+	0x87, 0x05, 0x6f, 0xaf, 0x8c, 0x99, 0xda, 0x4b, 0x76, 0xfa, 0x23, 0x1e, 0xae, 0x8e, 0xf9, 0x98,
+	0xaf, 0x6a, 0xe1, 0x4e, 0xb2, 0xab, 0x5f, 0xfa, 0xa1, 0xff, 0xe6, 0x06, 0xee, 0x27, 0x13, 0xac,
+	0x37, 0x92, 0x0a, 0xbc, 0x01, 0x35, 0x16, 0x38, 0xa8, 0x8b, 0x7a, 0x37, 0x06, 0xcb, 0x47, 0xb3,
+	0x8e, 0xf1, 0x7d, 0xd6, 0x59, 0x1a, 0x73, 0x11, 0xae, 0xbb, 0xb1, 0x60, 0xa1, 0x2f, 0xd2, 0xe1,
+	0x84, 0xa6, 0xcb, 0x3c, 0x64, 0x8a, 0x86, 0xb1, 0x4a, 0xdd, 0x1f, 0xb3, 0x8e, 0x95, 0xb0, 0x48,
+	0x79, 0x35, 0x16, 0xe0, 0x36, 0xd4, 0x69, 0xe8, 0xb3, 0xa9, 0x53, 0xeb, 0xd6, 0x7a, 0xf6, 0xc0,
+	0xca, 0x0d, 0xbc, 0x39, 0xc2, 0x8f, 0xa0, 0x19, 0xfb, 0x52, 0xbe, 0xe5, 0x22, 0x70, 0x4c, 0x1d,
+	0x6e, 0xe7, 0xe1, 0x6f, 0xb3, 0x0e, 0x2e, 0xf9, 0xa5, 0xad, 0x77, 0xa1, 0xc5, 0x77, 0x01, 0x76,
+	0x99, 0x90, 0x6a, 0x18, 0xf9, 0x21, 0x75, 0xac, 0x8a, 0xb1, 0xad, 0xf9, 0x4b, 0x3f, 0xa4, 0xf8,
+	0x0e, 0xd8, 0x53, 0xbf, 0xd4, 0xd4, 0x2b, 0x9a, 0x66, 0x8e, 0xb5, 0xe4, 0x3e, 0x2c, 0x06, 0x54,
+	0x8e, 0x04, 0x8b, 0x15, 0xe3, 0x91, 0xd3, 0xe8, 0xa2, 0x0b, 0x51, 0x35, 0x80, 0x97, 0xa0, 0xb1,
+	0x93, 0x04, 0x63, 0xaa, 0x9c, 0x85, 0x8a, 0xa4, 0x60, 0xf9, 0x84, 0x72, 0xc2, 0xa6, 0x53, 0xa7,
+	0x59, 0x09, 0xce, 0x11, 0x7e, 0x02, 0x30, 0x12, 0xd4, 0x57, 0x34, 0x18, 0xfa, 0xca, 0xb1, 0xbb,
+	0xa8, 0xb7, 0xb8, 0x76, 0xbb, 0xff, 0xeb, 0x69, 0xfa, 0xaf, 0x59, 0x48, 0xa5, 0xf2, 0xc3, 0x78,
+	0x60, 0x1d, 0x7e, 0xee, 0x20, 0xcf, 0x2e, 0x92, 0xb6, 0x54, 0xee, 0x90, 0xc4, 0x41, 0xe9, 0x00,
+	0xff, 0xec, 0x50, 0x24, 0x6d, 0x29, 0xf7, 0x03, 0x82, 0xa6, 0x47, 0x65, 0xcc, 0x23, 0x49, 0xf1,
+	0x03, 0xb0, 0x12, 0x49, 0x85, 0x3e, 0xe7, 0xe2, 0x5a, 0xeb, 0xaa, 0x51, 0x7e, 0x72, 0x4f, 0x6b,
+	0xf0, 0x32, 0xd4, 0xf3, 0xaf, 0x74, 0x6a, 0x5d, 0xf3, 0x0f, 0xe2, 0xb9, 0x08, 0xb7, 0xa0, 0x41,
+	0x85, 0xe0, 0x42, 0x3a, 0x66, 0xd7, 0xec, 0xd9, 0x5e, 0xf1, 0xca, 0xd7, 0xa3, 0xf8, 0x84, 0x46,
+	0x8e, 0x55, 0x5d, 0x8f, 0x46, 0xee, 0x7b, 0x04, 0x0b, 0x1e, 0xdd, 0x4f, 0xa8, 0x54, 0x78, 0x1d,
+	0xea, 0xfb, 0x09, 0x15, 0xa9, 0x83, 0x74, 0xb5, 0x7b, 0x57, 0xab, 0x15, 0xca, 0xfe, 0xab, 0x5c,
+	0xf6, 0x3c, 0x52, 0x22, 0xf5, 0xe6, 0x29, 0xed, 0x67, 0x00, 0x97, 0x10, 0xb7, 0xc0, 0x9c, 0xd0,
+	0x54, 0x8f, 0x58, 0xd6, 0xcb, 0x41, 0xde, 0xc9, 0x81, 0x3f, 0x4d, 0xa8, 0x53, 0xab, 0x76, 0xa2,
+	0xd1, 0x7a, 0xed, 0x31, 0x72, 0xb7, 0xc1, 0xbe, 0x58, 0x23, 0x26, 0xb0, 0x20, 0xe9, 0x88, 0x47,
+	0x81, 0xd4, 0x46, 0x66, 0x21, 0x2f, 0x61, 0x6e, 0x16, 0xf9, 0x11, 0x97, 0xda, 0xac, 0x5e, 0x9a,
+	0x69, 0xb4, 0x76, 0x84, 0xa0, 0xf9, 0xa2, 0xe8, 0x1e, 0x6f, 0x42, 0xe3, 0xa9, 0xbe, 0x26, 0xbe,
+	0x66, 0x81, 0xed, 0xf6, 0xef, 0x46, 0x9d, 0xdf, 0xcb, 0x35, 0xf0, 0x26, 0x98, 0xdb, 0x54, 0xe1,
+	0x5b, 0xd7, 0xee, 0xe3, 0x2f, 0xf9, 0x1b, 0x60, 0x6d, 0x25, 0x6a, 0xef, 0xff, 0xaa, 0x0f, 0x1e,
+	0x1e, 0x9f, 0x12, 0xe3, 0xe4, 0x94, 0x18, 0xe7, 0xa7, 0x04, 0xbd, 0xcb, 0x08, 0xfa, 0x98, 0x11,
+	0x74, 0x94, 0x11, 0x74, 0x9c, 0x11, 0xf4, 0x25, 0x23, 0xe8, 0x6b, 0x46, 0x8c, 0xf3, 0x8c, 0xa0,
+	0xc3, 0x33, 0x62, 0x1c, 0x9f, 0x11, 0xe3, 0xe4, 0x8c, 0x18, 0x3f, 0x03, 0x00, 0x00, 0xff, 0xff,
+	0x72, 0x44, 0x60, 0xb7, 0x95, 0x04, 0x00, 0x00,
 }
 
 func (this *User) Equal(that interface{}) bool {
@@ -564,11 +460,11 @@ func (this *Response) Equal(that interface{}) bool {
 		return false
 	}
 	for i := range this.Errors {
-		if !this.Errors[i].Equal(that1.Errors[i]) {
+		if this.Errors[i] != that1.Errors[i] {
 			return false
 		}
 	}
-	if !this.Token.Equal(that1.Token) {
+	if this.Token != that1.Token {
 		return false
 	}
 	return true
@@ -592,67 +488,13 @@ func (this *Request) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	return true
-}
-func (this *Token) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
+	if len(this.Query) != len(that1.Query) {
+		return false
 	}
-
-	that1, ok := that.(*Token)
-	if !ok {
-		that2, ok := that.(Token)
-		if ok {
-			that1 = &that2
-		} else {
+	for i := range this.Query {
+		if this.Query[i] != that1.Query[i] {
 			return false
 		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Token != that1.Token {
-		return false
-	}
-	if this.Valid != that1.Valid {
-		return false
-	}
-	if len(this.Errors) != len(that1.Errors) {
-		return false
-	}
-	for i := range this.Errors {
-		if !this.Errors[i].Equal(that1.Errors[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *Error) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Error)
-	if !ok {
-		that2, ok := that.(Error)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Code != that1.Code {
-		return false
-	}
-	if this.Description != that1.Description {
-		return false
 	}
 	return true
 }
@@ -721,9 +563,7 @@ func (this *Response) GoString() string {
 	if this.Errors != nil {
 		s = append(s, "Errors: "+fmt.Sprintf("%#v", this.Errors)+",\n")
 	}
-	if this.Token != nil {
-		s = append(s, "Token: "+fmt.Sprintf("%#v", this.Token)+",\n")
-	}
+	s = append(s, "Token: "+fmt.Sprintf("%#v", this.Token)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -731,33 +571,21 @@ func (this *Request) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 4)
+	s := make([]string, 0, 5)
 	s = append(s, "&identity_service.Request{")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Token) GoString() string {
-	if this == nil {
-		return "nil"
+	keysForQuery := make([]string, 0, len(this.Query))
+	for k, _ := range this.Query {
+		keysForQuery = append(keysForQuery, k)
 	}
-	s := make([]string, 0, 7)
-	s = append(s, "&identity_service.Token{")
-	s = append(s, "Token: "+fmt.Sprintf("%#v", this.Token)+",\n")
-	s = append(s, "Valid: "+fmt.Sprintf("%#v", this.Valid)+",\n")
-	if this.Errors != nil {
-		s = append(s, "Errors: "+fmt.Sprintf("%#v", this.Errors)+",\n")
+	github_com_gogo_protobuf_sortkeys.Strings(keysForQuery)
+	mapStringForQuery := "map[string]string{"
+	for _, k := range keysForQuery {
+		mapStringForQuery += fmt.Sprintf("%#v: %#v,", k, this.Query[k])
 	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Error) GoString() string {
-	if this == nil {
-		return "nil"
+	mapStringForQuery += "}"
+	if this.Query != nil {
+		s = append(s, "Query: "+mapStringForQuery+",\n")
 	}
-	s := make([]string, 0, 6)
-	s = append(s, "&identity_service.Error{")
-	s = append(s, "Code: "+fmt.Sprintf("%#v", this.Code)+",\n")
-	s = append(s, "Description: "+fmt.Sprintf("%#v", this.Description)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -794,10 +622,8 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type IdentityClient interface {
 	Create(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
-	Get(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
-	GetAll(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
-	Auth(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error)
-	ValidateToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Token, error)
+	Get(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	Auth(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 }
 
 type identityClient struct {
@@ -817,7 +643,7 @@ func (c *identityClient) Create(ctx context.Context, in *User, opts ...grpc.Call
 	return out, nil
 }
 
-func (c *identityClient) Get(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error) {
+func (c *identityClient) Get(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
 	err := c.cc.Invoke(ctx, "/identity_service.Identity/Get", in, out, opts...)
 	if err != nil {
@@ -826,27 +652,9 @@ func (c *identityClient) Get(ctx context.Context, in *User, opts ...grpc.CallOpt
 	return out, nil
 }
 
-func (c *identityClient) GetAll(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *identityClient) Auth(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/identity_service.Identity/GetAll", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *identityClient) Auth(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error) {
-	out := new(Token)
 	err := c.cc.Invoke(ctx, "/identity_service.Identity/Auth", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *identityClient) ValidateToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Token, error) {
-	out := new(Token)
-	err := c.cc.Invoke(ctx, "/identity_service.Identity/ValidateToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -856,10 +664,8 @@ func (c *identityClient) ValidateToken(ctx context.Context, in *Token, opts ...g
 // IdentityServer is the server API for Identity service.
 type IdentityServer interface {
 	Create(context.Context, *User) (*Response, error)
-	Get(context.Context, *User) (*Response, error)
-	GetAll(context.Context, *Request) (*Response, error)
-	Auth(context.Context, *User) (*Token, error)
-	ValidateToken(context.Context, *Token) (*Token, error)
+	Get(context.Context, *Request) (*Response, error)
+	Auth(context.Context, *User) (*Response, error)
 }
 
 func RegisterIdentityServer(s *grpc.Server, srv IdentityServer) {
@@ -885,7 +691,7 @@ func _Identity_Create_Handler(srv interface{}, ctx context.Context, dec func(int
 }
 
 func _Identity_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
+	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -897,25 +703,7 @@ func _Identity_Get_Handler(srv interface{}, ctx context.Context, dec func(interf
 		FullMethod: "/identity_service.Identity/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServer).Get(ctx, req.(*User))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Identity_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Request)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IdentityServer).GetAll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/identity_service.Identity/GetAll",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServer).GetAll(ctx, req.(*Request))
+		return srv.(IdentityServer).Get(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -938,24 +726,6 @@ func _Identity_Auth_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Identity_ValidateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Token)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IdentityServer).ValidateToken(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/identity_service.Identity/ValidateToken",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServer).ValidateToken(ctx, req.(*Token))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _Identity_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "identity_service.Identity",
 	HandlerType: (*IdentityServer)(nil),
@@ -969,16 +739,8 @@ var _Identity_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Identity_Get_Handler,
 		},
 		{
-			MethodName: "GetAll",
-			Handler:    _Identity_GetAll_Handler,
-		},
-		{
 			MethodName: "Auth",
 			Handler:    _Identity_Auth_Handler,
-		},
-		{
-			MethodName: "ValidateToken",
-			Handler:    _Identity_ValidateToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1092,27 +854,24 @@ func (m *Response) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if len(m.Errors) > 0 {
-		for _, msg := range m.Errors {
+		for _, s := range m.Errors {
 			dAtA[i] = 0x1a
 			i++
-			i = encodeVarintIdentityService(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
 			}
-			i += n
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
 		}
 	}
-	if m.Token != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintIdentityService(dAtA, i, uint64(m.Token.Size()))
-		n4, err := m.Token.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n4
-	}
+	dAtA[i] = 0x22
+	i++
+	i = encodeVarintIdentityService(dAtA, i, uint64(len(m.Token)))
+	i += copy(dAtA[i:], m.Token)
 	return i, nil
 }
 
@@ -1131,73 +890,23 @@ func (m *Request) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	return i, nil
-}
-
-func (m *Token) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Token) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintIdentityService(dAtA, i, uint64(len(m.Token)))
-	i += copy(dAtA[i:], m.Token)
-	dAtA[i] = 0x10
-	i++
-	if m.Valid {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
-	}
-	i++
-	if len(m.Errors) > 0 {
-		for _, msg := range m.Errors {
-			dAtA[i] = 0x1a
+	if len(m.Query) > 0 {
+		for k, _ := range m.Query {
+			dAtA[i] = 0xa
 			i++
-			i = encodeVarintIdentityService(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
+			v := m.Query[k]
+			mapSize := 1 + len(k) + sovIdentityService(uint64(len(k))) + 1 + len(v) + sovIdentityService(uint64(len(v)))
+			i = encodeVarintIdentityService(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintIdentityService(dAtA, i, uint64(len(k)))
+			i += copy(dAtA[i:], k)
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintIdentityService(dAtA, i, uint64(len(v)))
+			i += copy(dAtA[i:], v)
 		}
 	}
-	return i, nil
-}
-
-func (m *Error) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Error) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintIdentityService(dAtA, i, uint64(m.Code))
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintIdentityService(dAtA, i, uint64(len(m.Description)))
-	i += copy(dAtA[i:], m.Description)
 	return i, nil
 }
 
@@ -1283,15 +992,13 @@ func (m *Response) Size() (n int) {
 		}
 	}
 	if len(m.Errors) > 0 {
-		for _, e := range m.Errors {
-			l = e.Size()
+		for _, s := range m.Errors {
+			l = len(s)
 			n += 1 + l + sovIdentityService(uint64(l))
 		}
 	}
-	if m.Token != nil {
-		l = m.Token.Size()
-		n += 1 + l + sovIdentityService(uint64(l))
-	}
+	l = len(m.Token)
+	n += 1 + l + sovIdentityService(uint64(l))
 	return n
 }
 
@@ -1301,36 +1008,14 @@ func (m *Request) Size() (n int) {
 	}
 	var l int
 	_ = l
-	return n
-}
-
-func (m *Token) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Token)
-	n += 1 + l + sovIdentityService(uint64(l))
-	n += 2
-	if len(m.Errors) > 0 {
-		for _, e := range m.Errors {
-			l = e.Size()
-			n += 1 + l + sovIdentityService(uint64(l))
+	if len(m.Query) > 0 {
+		for k, v := range m.Query {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovIdentityService(uint64(len(k))) + 1 + len(v) + sovIdentityService(uint64(len(v)))
+			n += mapEntrySize + 1 + sovIdentityService(uint64(mapEntrySize))
 		}
 	}
-	return n
-}
-
-func (m *Error) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	n += 1 + sovIdentityService(uint64(m.Code))
-	l = len(m.Description)
-	n += 1 + l + sovIdentityService(uint64(l))
 	return n
 }
 
@@ -1384,8 +1069,8 @@ func (this *Response) String() string {
 	s := strings.Join([]string{`&Response{`,
 		`User:` + strings.Replace(fmt.Sprintf("%v", this.User), "User", "User", 1) + `,`,
 		`Users:` + strings.Replace(fmt.Sprintf("%v", this.Users), "User", "User", 1) + `,`,
-		`Errors:` + strings.Replace(fmt.Sprintf("%v", this.Errors), "Error", "Error", 1) + `,`,
-		`Token:` + strings.Replace(fmt.Sprintf("%v", this.Token), "Token", "Token", 1) + `,`,
+		`Errors:` + fmt.Sprintf("%v", this.Errors) + `,`,
+		`Token:` + fmt.Sprintf("%v", this.Token) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1394,30 +1079,18 @@ func (this *Request) String() string {
 	if this == nil {
 		return "nil"
 	}
+	keysForQuery := make([]string, 0, len(this.Query))
+	for k, _ := range this.Query {
+		keysForQuery = append(keysForQuery, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForQuery)
+	mapStringForQuery := "map[string]string{"
+	for _, k := range keysForQuery {
+		mapStringForQuery += fmt.Sprintf("%v: %v,", k, this.Query[k])
+	}
+	mapStringForQuery += "}"
 	s := strings.Join([]string{`&Request{`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Token) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Token{`,
-		`Token:` + fmt.Sprintf("%v", this.Token) + `,`,
-		`Valid:` + fmt.Sprintf("%v", this.Valid) + `,`,
-		`Errors:` + strings.Replace(fmt.Sprintf("%v", this.Errors), "Error", "Error", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Error) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Error{`,
-		`Code:` + fmt.Sprintf("%v", this.Code) + `,`,
-		`Description:` + fmt.Sprintf("%v", this.Description) + `,`,
+		`Query:` + mapStringForQuery + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1929,7 +1602,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Errors", wireType)
 			}
-			var msglen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowIdentityService
@@ -1939,31 +1612,29 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthIdentityService
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthIdentityService
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Errors = append(m.Errors, &Error{})
-			if err := m.Errors[len(m.Errors)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			m.Errors = append(m.Errors, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Token", wireType)
 			}
-			var msglen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowIdentityService
@@ -1973,27 +1644,23 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthIdentityService
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthIdentityService
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Token == nil {
-				m.Token = &Token{}
-			}
-			if err := m.Token.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			m.Token = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -2048,114 +1715,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: Request: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipIdentityService(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthIdentityService
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthIdentityService
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Token) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowIdentityService
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Token: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Token: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Token", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowIdentityService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthIdentityService
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthIdentityService
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Token = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Valid", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowIdentityService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Valid = bool(v != 0)
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Errors", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Query", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -2182,114 +1744,103 @@ func (m *Token) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Errors = append(m.Errors, &Error{})
-			if err := m.Errors[len(m.Errors)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
+			if m.Query == nil {
+				m.Query = make(map[string]string)
 			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipIdentityService(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthIdentityService
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthIdentityService
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Error) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowIdentityService
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Error: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Error: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Code", wireType)
-			}
-			m.Code = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowIdentityService
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowIdentityService
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
 				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowIdentityService
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthIdentityService
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthIdentityService
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowIdentityService
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthIdentityService
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthIdentityService
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipIdentityService(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthIdentityService
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
 				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Code |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
 			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowIdentityService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthIdentityService
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthIdentityService
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Description = string(dAtA[iNdEx:postIndex])
+			m.Query[mapkey] = mapvalue
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
