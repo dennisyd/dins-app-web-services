@@ -22,16 +22,28 @@ func init() {
 }
 
 func main() {
+
+	// connect to mysql and defer conn close
+	ConnectDB()
+	defer DB.Close()
+
+	// start listening on addr
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	// start new grpc service with 5 min connection timeout
 	s := grpc.NewServer(
 		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle: 5 * time.Minute, // <--- This fixes it!
+			MaxConnectionIdle: 5 * time.Minute,
 		}),
 	)
-	pb.RegisterRecipesServer(s, &Handler{})
+
+	// register handlers with grpc
+	pb.RegisterInternalRecipesServer(s, &Handler{})
+
+	// serve grpc over listener
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

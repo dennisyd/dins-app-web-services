@@ -16,7 +16,7 @@ import (
 
 var (
 	recipesAddr   = "localhost:50051"
-	recipesClient recipesPb.RecipesClient
+	recipesClient recipesPb.InternalRecipesClient
 )
 
 func init() {
@@ -60,7 +60,7 @@ func connectRecipesServer() *grpc.ClientConn {
 	}
 
 	// register client
-	recipesClient = recipesPb.NewRecipesClient(conn)
+	recipesClient = recipesPb.NewInternalRecipesClient(conn)
 	log.Println("Connected", recipesAddr)
 	return conn
 }
