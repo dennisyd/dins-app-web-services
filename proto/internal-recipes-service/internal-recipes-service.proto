@@ -1,23 +1,53 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package internal_recipes_service;
 
-service Recipes {
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+service InternalRecipes {
     rpc Create(Recipe) returns (Response) {}
     rpc Get(Request) returns (Response) {}
-} 
+}
 
 message Recipe {
-    string id = 1;
-    string name = 2;
-    string description = 3;
-}
-
-message Request {}
+    optional uint32 id = 1 [(gogoproto.moretags) = "gorm:\"primary_key,omitempty\"", (gogoproto.casttype)="uint"];
+    required string name = 2;
+    required string description = 3;
+    optional string ingredients = 4;
+    optional string steps = 5;
+    optional string difficulty = 6;
+    optional string price = 7;
+    optional uint32 author = 8 [(gogoproto.casttype)="uint"];
+    optional string image = 9;
+    optional Timestamp created_at = 10 [(gogoproto.stdtime)=true];
+    optional Timestamp updated_at = 11 [(gogoproto.stdtime)=true];
+}   
 
 message Response {
-    bool created = 1;
-    Recipe recipe = 2;
-    repeated Recipe recipes = 3;
+    optional Recipe recipe = 1;
+    repeated Recipe recipes = 2;
+    repeated Error errors = 3;
 }
 
+message Request {
+    map<string, string> query = 1;
+}
+
+message Error {
+    optional int32 code = 1;
+    optional string description = 2;
+}
+
+message Timestamp {
+
+    // Represents seconds of UTC time since Unix epoch
+    // 1970-01-01T00:00:00Z. Must be from from 0001-01-01T00:00:00Z to
+    // 9999-12-31T23:59:59Z inclusive.
+    optional int64 seconds = 1;
+  
+    // Non-negative fractions of a second at nanosecond resolution. Negative
+    // second values with fractions must still have non-negative nanos values
+    // that count forward in time. Must be from 0 to 999,999,999
+    // inclusive.
+    optional int32 nanos = 2;
+}

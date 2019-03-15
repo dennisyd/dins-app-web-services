@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package dins.app.api.v1.identity;
+package identity_service;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
@@ -57,4 +57,4 @@ message Timestamp {
     // that count forward in time. Must be from 0 to 999,999,999
     // inclusive.
     optional int32 nanos = 2;
-  }
+}

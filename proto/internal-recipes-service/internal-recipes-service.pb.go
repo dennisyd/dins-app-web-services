@@ -6,18 +6,24 @@ package internal_recipes_service
 import (
 	context "context"
 	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
+	github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
+	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	grpc "google.golang.org/grpc"
 	io "io"
 	math "math"
 	reflect "reflect"
 	strings "strings"
+	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -26,9 +32,17 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 type Recipe struct {
-	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name        string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Id          uint       `protobuf:"varint,1,opt,name=id,casttype=uint" json:"id" gorm:"primary_key,omitempty"`
+	Name        string     `protobuf:"bytes,2,req,name=name" json:"name"`
+	Description string     `protobuf:"bytes,3,req,name=description" json:"description"`
+	Ingredients string     `protobuf:"bytes,4,opt,name=ingredients" json:"ingredients"`
+	Steps       string     `protobuf:"bytes,5,opt,name=steps" json:"steps"`
+	Difficulty  string     `protobuf:"bytes,6,opt,name=difficulty" json:"difficulty"`
+	Price       string     `protobuf:"bytes,7,opt,name=price" json:"price"`
+	Author      uint       `protobuf:"varint,8,opt,name=author,casttype=uint" json:"author"`
+	Image       string     `protobuf:"bytes,9,opt,name=image" json:"image"`
+	CreatedAt   *time.Time `protobuf:"bytes,10,opt,name=created_at,json=createdAt,stdtime" json:"created_at,omitempty"`
+	UpdatedAt   *time.Time `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,stdtime" json:"updated_at,omitempty"`
 }
 
 func (m *Recipe) Reset()      { *m = Recipe{} }
@@ -63,11 +77,11 @@ func (m *Recipe) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Recipe proto.InternalMessageInfo
 
-func (m *Recipe) GetId() string {
+func (m *Recipe) GetId() uint {
 	if m != nil {
 		return m.Id
 	}
-	return ""
+	return 0
 }
 
 func (m *Recipe) GetName() string {
@@ -84,51 +98,72 @@ func (m *Recipe) GetDescription() string {
 	return ""
 }
 
-type Request struct {
-}
-
-func (m *Request) Reset()      { *m = Request{} }
-func (*Request) ProtoMessage() {}
-func (*Request) Descriptor() ([]byte, []int) {
-	return fileDescriptor_459e21869af81ec2, []int{1}
-}
-func (m *Request) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Request) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Request.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
+func (m *Recipe) GetIngredients() string {
+	if m != nil {
+		return m.Ingredients
 	}
-}
-func (m *Request) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Request.Merge(m, src)
-}
-func (m *Request) XXX_Size() int {
-	return m.Size()
-}
-func (m *Request) XXX_DiscardUnknown() {
-	xxx_messageInfo_Request.DiscardUnknown(m)
+	return ""
 }
 
-var xxx_messageInfo_Request proto.InternalMessageInfo
+func (m *Recipe) GetSteps() string {
+	if m != nil {
+		return m.Steps
+	}
+	return ""
+}
+
+func (m *Recipe) GetDifficulty() string {
+	if m != nil {
+		return m.Difficulty
+	}
+	return ""
+}
+
+func (m *Recipe) GetPrice() string {
+	if m != nil {
+		return m.Price
+	}
+	return ""
+}
+
+func (m *Recipe) GetAuthor() uint {
+	if m != nil {
+		return m.Author
+	}
+	return 0
+}
+
+func (m *Recipe) GetImage() string {
+	if m != nil {
+		return m.Image
+	}
+	return ""
+}
+
+func (m *Recipe) GetCreatedAt() *time.Time {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return nil
+}
+
+func (m *Recipe) GetUpdatedAt() *time.Time {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return nil
+}
 
 type Response struct {
-	Created bool      `protobuf:"varint,1,opt,name=created,proto3" json:"created,omitempty"`
-	Recipe  *Recipe   `protobuf:"bytes,2,opt,name=recipe,proto3" json:"recipe,omitempty"`
-	Recipes []*Recipe `protobuf:"bytes,3,rep,name=recipes,proto3" json:"recipes,omitempty"`
+	Recipe  *Recipe   `protobuf:"bytes,1,opt,name=recipe" json:"recipe,omitempty"`
+	Recipes []*Recipe `protobuf:"bytes,2,rep,name=recipes" json:"recipes,omitempty"`
+	Errors  []*Error  `protobuf:"bytes,3,rep,name=errors" json:"errors,omitempty"`
 }
 
 func (m *Response) Reset()      { *m = Response{} }
 func (*Response) ProtoMessage() {}
 func (*Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_459e21869af81ec2, []int{2}
+	return fileDescriptor_459e21869af81ec2, []int{1}
 }
 func (m *Response) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -157,13 +192,6 @@ func (m *Response) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Response proto.InternalMessageInfo
 
-func (m *Response) GetCreated() bool {
-	if m != nil {
-		return m.Created
-	}
-	return false
-}
-
 func (m *Response) GetRecipe() *Recipe {
 	if m != nil {
 		return m.Recipe
@@ -178,35 +206,218 @@ func (m *Response) GetRecipes() []*Recipe {
 	return nil
 }
 
+func (m *Response) GetErrors() []*Error {
+	if m != nil {
+		return m.Errors
+	}
+	return nil
+}
+
+type Request struct {
+	Query map[string]string `protobuf:"bytes,1,rep,name=query" json:"query,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+}
+
+func (m *Request) Reset()      { *m = Request{} }
+func (*Request) ProtoMessage() {}
+func (*Request) Descriptor() ([]byte, []int) {
+	return fileDescriptor_459e21869af81ec2, []int{2}
+}
+func (m *Request) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Request) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Request.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Request) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Request.Merge(m, src)
+}
+func (m *Request) XXX_Size() int {
+	return m.Size()
+}
+func (m *Request) XXX_DiscardUnknown() {
+	xxx_messageInfo_Request.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Request proto.InternalMessageInfo
+
+func (m *Request) GetQuery() map[string]string {
+	if m != nil {
+		return m.Query
+	}
+	return nil
+}
+
+type Error struct {
+	Code        int32  `protobuf:"varint,1,opt,name=code" json:"code"`
+	Description string `protobuf:"bytes,2,opt,name=description" json:"description"`
+}
+
+func (m *Error) Reset()      { *m = Error{} }
+func (*Error) ProtoMessage() {}
+func (*Error) Descriptor() ([]byte, []int) {
+	return fileDescriptor_459e21869af81ec2, []int{3}
+}
+func (m *Error) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Error) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Error.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Error) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Error.Merge(m, src)
+}
+func (m *Error) XXX_Size() int {
+	return m.Size()
+}
+func (m *Error) XXX_DiscardUnknown() {
+	xxx_messageInfo_Error.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Error proto.InternalMessageInfo
+
+func (m *Error) GetCode() int32 {
+	if m != nil {
+		return m.Code
+	}
+	return 0
+}
+
+func (m *Error) GetDescription() string {
+	if m != nil {
+		return m.Description
+	}
+	return ""
+}
+
+type Timestamp struct {
+	// Represents seconds of UTC time since Unix epoch
+	// 1970-01-01T00:00:00Z. Must be from from 0001-01-01T00:00:00Z to
+	// 9999-12-31T23:59:59Z inclusive.
+	Seconds int64 `protobuf:"varint,1,opt,name=seconds" json:"seconds"`
+	// Non-negative fractions of a second at nanosecond resolution. Negative
+	// second values with fractions must still have non-negative nanos values
+	// that count forward in time. Must be from 0 to 999,999,999
+	// inclusive.
+	Nanos int32 `protobuf:"varint,2,opt,name=nanos" json:"nanos"`
+}
+
+func (m *Timestamp) Reset()      { *m = Timestamp{} }
+func (*Timestamp) ProtoMessage() {}
+func (*Timestamp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_459e21869af81ec2, []int{4}
+}
+func (m *Timestamp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Timestamp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Timestamp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Timestamp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Timestamp.Merge(m, src)
+}
+func (m *Timestamp) XXX_Size() int {
+	return m.Size()
+}
+func (m *Timestamp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Timestamp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Timestamp proto.InternalMessageInfo
+
+func (m *Timestamp) GetSeconds() int64 {
+	if m != nil {
+		return m.Seconds
+	}
+	return 0
+}
+
+func (m *Timestamp) GetNanos() int32 {
+	if m != nil {
+		return m.Nanos
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*Recipe)(nil), "internal_recipes_service.Recipe")
-	proto.RegisterType((*Request)(nil), "internal_recipes_service.Request")
 	proto.RegisterType((*Response)(nil), "internal_recipes_service.Response")
+	proto.RegisterType((*Request)(nil), "internal_recipes_service.Request")
+	proto.RegisterMapType((map[string]string)(nil), "internal_recipes_service.Request.QueryEntry")
+	proto.RegisterType((*Error)(nil), "internal_recipes_service.Error")
+	proto.RegisterType((*Timestamp)(nil), "internal_recipes_service.Timestamp")
 }
 
 func init() { proto.RegisterFile("internal-recipes-service.proto", fileDescriptor_459e21869af81ec2) }
 
 var fileDescriptor_459e21869af81ec2 = []byte{
-	// 297 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xb1, 0x4e, 0xc3, 0x30,
-	0x10, 0x86, 0xed, 0x06, 0xa5, 0xed, 0x55, 0x62, 0xb8, 0xc9, 0x62, 0x38, 0x85, 0x4c, 0x2c, 0xed,
-	0x50, 0x18, 0x10, 0x23, 0x0c, 0x6c, 0x15, 0xf2, 0x0b, 0x54, 0x25, 0xbd, 0xc1, 0x12, 0x24, 0xc1,
-	0x36, 0xcc, 0x3c, 0x02, 0x33, 0x4f, 0x80, 0xc4, 0x8b, 0x30, 0x76, 0xec, 0x48, 0xdd, 0x85, 0xb1,
-	0x8f, 0x80, 0x70, 0x52, 0x89, 0x85, 0xd2, 0xed, 0xfc, 0xff, 0xff, 0xdd, 0x7d, 0xb6, 0x81, 0x4c,
-	0xe9, 0xd9, 0x96, 0xb3, 0xbb, 0xa1, 0xe5, 0xc2, 0xd4, 0xec, 0x86, 0x8e, 0xed, 0x93, 0x29, 0x78,
-	0x54, 0xdb, 0xca, 0x57, 0xa8, 0xb6, 0xfe, 0xb4, 0xf5, 0xa7, 0xad, 0x9f, 0x4f, 0x20, 0xd5, 0x51,
-	0xc2, 0x43, 0xe8, 0x98, 0xb9, 0x92, 0x99, 0x3c, 0xe9, 0xeb, 0x8e, 0x99, 0x23, 0xc2, 0x41, 0x39,
-	0xbb, 0x67, 0xd5, 0x89, 0x4a, 0xac, 0x31, 0x83, 0xc1, 0x9c, 0x5d, 0x61, 0x4d, 0xed, 0x4d, 0x55,
-	0xaa, 0x24, 0x5a, 0xbf, 0xa5, 0xbc, 0x0f, 0x5d, 0xcd, 0x0f, 0x8f, 0xec, 0x7c, 0xfe, 0x2a, 0xa1,
-	0xa7, 0xd9, 0xd5, 0x55, 0xe9, 0x18, 0x15, 0x74, 0x0b, 0xcb, 0x33, 0xcf, 0xcd, 0x8a, 0x9e, 0xde,
-	0x1e, 0xf1, 0x1c, 0xd2, 0x06, 0x2a, 0x6e, 0x1a, 0x8c, 0xb3, 0xd1, 0x5f, 0xb0, 0xa3, 0x86, 0x54,
-	0xb7, 0x79, 0xbc, 0x80, 0x6e, 0x9b, 0x50, 0x49, 0x96, 0xec, 0xd5, 0xba, 0x6d, 0x18, 0xbf, 0xcb,
-	0x1f, 0xd0, 0x58, 0xe3, 0x0d, 0xa4, 0x57, 0x11, 0x06, 0xff, 0x1d, 0x70, 0x94, 0xef, 0x4a, 0x34,
-	0x77, 0xcd, 0x05, 0x4e, 0x20, 0xb9, 0x66, 0x8f, 0xc7, 0xbb, 0xc2, 0xf1, 0x91, 0xf6, 0x9b, 0x77,
-	0x79, 0xb6, 0x58, 0x91, 0x58, 0xae, 0x48, 0x6c, 0x56, 0x24, 0x9f, 0x03, 0xc9, 0xb7, 0x40, 0xf2,
-	0x23, 0x90, 0x5c, 0x04, 0x92, 0x9f, 0x81, 0xe4, 0x57, 0x20, 0xb1, 0x09, 0x24, 0x5f, 0xd6, 0x24,
-	0x16, 0x6b, 0x12, 0xcb, 0x35, 0x89, 0xdb, 0x34, 0x7e, 0xfe, 0xe9, 0x77, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0x73, 0x1f, 0x93, 0xae, 0x1e, 0x02, 0x00, 0x00,
+	// 628 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0x4d, 0x4f, 0xd4, 0x40,
+	0x18, 0xc7, 0x3b, 0xfb, 0xca, 0x3e, 0xab, 0x31, 0x99, 0x83, 0x99, 0x6c, 0xcc, 0xec, 0x5a, 0x89,
+	0xe1, 0x00, 0x4b, 0x42, 0x4c, 0x24, 0xc4, 0x0b, 0xab, 0x04, 0xb9, 0x18, 0x6d, 0xbc, 0x6f, 0x4a,
+	0x3b, 0x2c, 0x13, 0x68, 0xa7, 0xcc, 0x4c, 0x49, 0x7a, 0xf3, 0x23, 0x90, 0xf8, 0x25, 0xbc, 0x7b,
+	0xf2, 0x1b, 0x70, 0xe4, 0xc8, 0x09, 0xa5, 0x78, 0xf0, 0x48, 0x3c, 0x7a, 0x32, 0x33, 0x6d, 0xa1,
+	0x31, 0xe1, 0xc5, 0xdb, 0xf6, 0xff, 0xf2, 0x6b, 0xf7, 0x79, 0x1e, 0xa0, 0x3c, 0xd6, 0x4c, 0xc6,
+	0xfe, 0xfe, 0x92, 0x64, 0x01, 0x4f, 0x98, 0x5a, 0x52, 0x4c, 0x1e, 0xf2, 0x80, 0x8d, 0x13, 0x29,
+	0xb4, 0xc0, 0xa4, 0xf2, 0xa7, 0xa5, 0x3f, 0x2d, 0xfd, 0xc1, 0xd2, 0x8c, 0xeb, 0xdd, 0x74, 0x7b,
+	0x1c, 0x88, 0x68, 0x79, 0x26, 0x66, 0x62, 0xd9, 0x16, 0xb6, 0xd3, 0x1d, 0xfb, 0x64, 0x1f, 0xec,
+	0xaf, 0x02, 0xe4, 0xfe, 0x6c, 0x42, 0xc7, 0xb3, 0x08, 0xfc, 0x0a, 0x1a, 0x3c, 0x24, 0x68, 0x84,
+	0x16, 0x1e, 0x4e, 0x16, 0x8f, 0xcf, 0x86, 0xce, 0xef, 0xb3, 0xe1, 0x93, 0x99, 0x90, 0xd1, 0x9a,
+	0x9b, 0x48, 0x1e, 0xf9, 0x32, 0x9b, 0xee, 0xb1, 0x6c, 0x51, 0x44, 0x5c, 0xb3, 0x28, 0xd1, 0x99,
+	0xfb, 0xe7, 0x6c, 0xd8, 0x4a, 0x79, 0xac, 0xbd, 0x06, 0x0f, 0x31, 0x81, 0x56, 0xec, 0x47, 0x8c,
+	0x34, 0x46, 0x8d, 0x85, 0xde, 0xa4, 0x65, 0xfa, 0x9e, 0x55, 0xf0, 0x73, 0xe8, 0x87, 0x4c, 0x05,
+	0x92, 0x27, 0x9a, 0x8b, 0x98, 0x34, 0x6b, 0x81, 0xba, 0x61, 0x72, 0x3c, 0x9e, 0x49, 0x16, 0x72,
+	0x16, 0x6b, 0x45, 0x5a, 0x23, 0x74, 0x9d, 0xab, 0x19, 0x78, 0x00, 0x6d, 0xa5, 0x59, 0xa2, 0x48,
+	0xbb, 0x96, 0x28, 0x24, 0x3c, 0x0f, 0x10, 0xf2, 0x9d, 0x1d, 0x1e, 0xa4, 0xfb, 0x3a, 0x23, 0x9d,
+	0x5a, 0xa0, 0xa6, 0x1b, 0x42, 0x22, 0x79, 0xc0, 0x48, 0xb7, 0x4e, 0xb0, 0x12, 0x9e, 0x87, 0x8e,
+	0x9f, 0xea, 0x5d, 0x21, 0xc9, 0x9c, 0x9d, 0xc4, 0x03, 0x63, 0x5e, 0xfd, 0xd3, 0xd2, 0x33, 0x04,
+	0x1e, 0xf9, 0x33, 0x46, 0x7a, 0x75, 0x82, 0x95, 0xf0, 0x5b, 0x80, 0x40, 0x32, 0x5f, 0xb3, 0x70,
+	0xea, 0x6b, 0x02, 0x23, 0xb4, 0xd0, 0x5f, 0x79, 0x36, 0xbe, 0x69, 0x61, 0xe3, 0x8f, 0x3c, 0x62,
+	0x4a, 0xfb, 0x51, 0x32, 0x69, 0x1d, 0x7d, 0x1f, 0x22, 0xaf, 0x57, 0x96, 0xd7, 0xb5, 0x21, 0xa5,
+	0x49, 0x58, 0x91, 0xfa, 0xff, 0x4d, 0x2a, 0xcb, 0xeb, 0xda, 0xfd, 0x86, 0x60, 0xce, 0x63, 0x2a,
+	0x11, 0xb1, 0x62, 0x78, 0x15, 0x3a, 0x45, 0xd5, 0x2e, 0xbb, 0xbf, 0x32, 0xba, 0x19, 0x59, 0x9c,
+	0x86, 0x57, 0xe6, 0xf1, 0x1a, 0x74, 0xcb, 0x04, 0x69, 0x8c, 0x9a, 0xf7, 0xaa, 0x56, 0x05, 0xfc,
+	0x12, 0x3a, 0x4c, 0x4a, 0x21, 0x15, 0x69, 0xda, 0xea, 0xf0, 0xe6, 0xea, 0x86, 0xc9, 0x79, 0x65,
+	0xdc, 0xfd, 0x8c, 0xa0, 0xeb, 0xb1, 0x83, 0x94, 0x29, 0x8d, 0x27, 0xd0, 0x3e, 0x48, 0x99, 0xcc,
+	0x08, 0xb2, 0x8c, 0xc5, 0xdb, 0x5e, 0x6f, 0x1b, 0xe3, 0x0f, 0x26, 0xbe, 0x11, 0x6b, 0x99, 0x79,
+	0x45, 0x75, 0xf0, 0x06, 0xe0, 0x5a, 0xc4, 0x8f, 0xa1, 0xb9, 0xc7, 0x32, 0x3b, 0x89, 0x6a, 0x8f,
+	0x46, 0x30, 0x1b, 0x3e, 0xf4, 0xf7, 0x53, 0x73, 0xd0, 0xb5, 0x0d, 0x5b, 0x69, 0xad, 0xb1, 0x8a,
+	0xdc, 0x2d, 0x68, 0xdb, 0xcf, 0x34, 0x87, 0x1f, 0x88, 0xb0, 0x98, 0x65, 0xbb, 0x3a, 0x7c, 0xa3,
+	0xfc, 0x7b, 0xf8, 0x75, 0x50, 0xdd, 0x70, 0x37, 0xa1, 0x77, 0xb5, 0x3a, 0x4c, 0xa1, 0xab, 0x58,
+	0x20, 0xe2, 0x50, 0x59, 0x62, 0xb3, 0x2c, 0x54, 0xa2, 0xf9, 0xae, 0xd8, 0x8f, 0x85, 0xb2, 0xb8,
+	0xea, 0x7d, 0x85, 0xb4, 0xf2, 0x15, 0xc1, 0xa3, 0xad, 0x72, 0x20, 0x5e, 0x39, 0xf6, 0xf7, 0xd0,
+	0x79, 0x6d, 0x0f, 0x0a, 0xdf, 0xb9, 0xab, 0x81, 0x7b, 0x5b, 0xa2, 0x38, 0x1e, 0xd7, 0xc1, 0xef,
+	0xa0, 0xb9, 0xc9, 0x34, 0x7e, 0x7a, 0xe7, 0xec, 0xef, 0xc7, 0x9b, 0xbc, 0x38, 0x39, 0xa7, 0xce,
+	0xe9, 0x39, 0x75, 0x2e, 0xcf, 0x29, 0xfa, 0x94, 0x53, 0xf4, 0x25, 0xa7, 0xe8, 0x38, 0xa7, 0xe8,
+	0x24, 0xa7, 0xe8, 0x47, 0x4e, 0xd1, 0xaf, 0x9c, 0x3a, 0x97, 0x39, 0x45, 0x47, 0x17, 0xd4, 0x39,
+	0xb9, 0xa0, 0xce, 0xe9, 0x05, 0x75, 0xfe, 0x06, 0x00, 0x00, 0xff, 0xff, 0x1d, 0x6c, 0x2f, 0xef,
+	0x22, 0x05, 0x00, 0x00,
 }
 
 func (this *Recipe) Equal(that interface{}) bool {
@@ -237,25 +448,36 @@ func (this *Recipe) Equal(that interface{}) bool {
 	if this.Description != that1.Description {
 		return false
 	}
-	return true
-}
-func (this *Request) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
+	if this.Ingredients != that1.Ingredients {
+		return false
 	}
-
-	that1, ok := that.(*Request)
-	if !ok {
-		that2, ok := that.(Request)
-		if ok {
-			that1 = &that2
-		} else {
+	if this.Steps != that1.Steps {
+		return false
+	}
+	if this.Difficulty != that1.Difficulty {
+		return false
+	}
+	if this.Price != that1.Price {
+		return false
+	}
+	if this.Author != that1.Author {
+		return false
+	}
+	if this.Image != that1.Image {
+		return false
+	}
+	if that1.CreatedAt == nil {
+		if this.CreatedAt != nil {
 			return false
 		}
+	} else if !this.CreatedAt.Equal(*that1.CreatedAt) {
+		return false
 	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
+	if that1.UpdatedAt == nil {
+		if this.UpdatedAt != nil {
+			return false
+		}
+	} else if !this.UpdatedAt.Equal(*that1.UpdatedAt) {
 		return false
 	}
 	return true
@@ -279,9 +501,6 @@ func (this *Response) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if this.Created != that1.Created {
-		return false
-	}
 	if !this.Recipe.Equal(that1.Recipe) {
 		return false
 	}
@@ -293,26 +512,120 @@ func (this *Response) Equal(that interface{}) bool {
 			return false
 		}
 	}
+	if len(this.Errors) != len(that1.Errors) {
+		return false
+	}
+	for i := range this.Errors {
+		if !this.Errors[i].Equal(that1.Errors[i]) {
+			return false
+		}
+	}
+	return true
+}
+func (this *Request) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Request)
+	if !ok {
+		that2, ok := that.(Request)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Query) != len(that1.Query) {
+		return false
+	}
+	for i := range this.Query {
+		if this.Query[i] != that1.Query[i] {
+			return false
+		}
+	}
+	return true
+}
+func (this *Error) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Error)
+	if !ok {
+		that2, ok := that.(Error)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Code != that1.Code {
+		return false
+	}
+	if this.Description != that1.Description {
+		return false
+	}
+	return true
+}
+func (this *Timestamp) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Timestamp)
+	if !ok {
+		that2, ok := that.(Timestamp)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Seconds != that1.Seconds {
+		return false
+	}
+	if this.Nanos != that1.Nanos {
+		return false
+	}
 	return true
 }
 func (this *Recipe) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 7)
+	s := make([]string, 0, 15)
 	s = append(s, "&internal_recipes_service.Recipe{")
 	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
 	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
 	s = append(s, "Description: "+fmt.Sprintf("%#v", this.Description)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Request) GoString() string {
-	if this == nil {
-		return "nil"
+	s = append(s, "Ingredients: "+fmt.Sprintf("%#v", this.Ingredients)+",\n")
+	s = append(s, "Steps: "+fmt.Sprintf("%#v", this.Steps)+",\n")
+	s = append(s, "Difficulty: "+fmt.Sprintf("%#v", this.Difficulty)+",\n")
+	s = append(s, "Price: "+fmt.Sprintf("%#v", this.Price)+",\n")
+	s = append(s, "Author: "+fmt.Sprintf("%#v", this.Author)+",\n")
+	s = append(s, "Image: "+fmt.Sprintf("%#v", this.Image)+",\n")
+	if this.CreatedAt != nil {
+		s = append(s, "CreatedAt: "+valueToGoStringInternalRecipesService(this.CreatedAt, "time.Time")+",\n")
 	}
-	s := make([]string, 0, 4)
-	s = append(s, "&internal_recipes_service.Request{")
+	if this.UpdatedAt != nil {
+		s = append(s, "UpdatedAt: "+valueToGoStringInternalRecipesService(this.UpdatedAt, "time.Time")+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -322,13 +635,59 @@ func (this *Response) GoString() string {
 	}
 	s := make([]string, 0, 7)
 	s = append(s, "&internal_recipes_service.Response{")
-	s = append(s, "Created: "+fmt.Sprintf("%#v", this.Created)+",\n")
 	if this.Recipe != nil {
 		s = append(s, "Recipe: "+fmt.Sprintf("%#v", this.Recipe)+",\n")
 	}
 	if this.Recipes != nil {
 		s = append(s, "Recipes: "+fmt.Sprintf("%#v", this.Recipes)+",\n")
 	}
+	if this.Errors != nil {
+		s = append(s, "Errors: "+fmt.Sprintf("%#v", this.Errors)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Request) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&internal_recipes_service.Request{")
+	keysForQuery := make([]string, 0, len(this.Query))
+	for k, _ := range this.Query {
+		keysForQuery = append(keysForQuery, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForQuery)
+	mapStringForQuery := "map[string]string{"
+	for _, k := range keysForQuery {
+		mapStringForQuery += fmt.Sprintf("%#v: %#v,", k, this.Query[k])
+	}
+	mapStringForQuery += "}"
+	if this.Query != nil {
+		s = append(s, "Query: "+mapStringForQuery+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Error) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&internal_recipes_service.Error{")
+	s = append(s, "Code: "+fmt.Sprintf("%#v", this.Code)+",\n")
+	s = append(s, "Description: "+fmt.Sprintf("%#v", this.Description)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Timestamp) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&internal_recipes_service.Timestamp{")
+	s = append(s, "Seconds: "+fmt.Sprintf("%#v", this.Seconds)+",\n")
+	s = append(s, "Nanos: "+fmt.Sprintf("%#v", this.Nanos)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -349,97 +708,97 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// RecipesClient is the client API for Recipes service.
+// InternalRecipesClient is the client API for InternalRecipes service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type RecipesClient interface {
+type InternalRecipesClient interface {
 	Create(ctx context.Context, in *Recipe, opts ...grpc.CallOption) (*Response, error)
 	Get(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 }
 
-type recipesClient struct {
+type internalRecipesClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewRecipesClient(cc *grpc.ClientConn) RecipesClient {
-	return &recipesClient{cc}
+func NewInternalRecipesClient(cc *grpc.ClientConn) InternalRecipesClient {
+	return &internalRecipesClient{cc}
 }
 
-func (c *recipesClient) Create(ctx context.Context, in *Recipe, opts ...grpc.CallOption) (*Response, error) {
+func (c *internalRecipesClient) Create(ctx context.Context, in *Recipe, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/internal_recipes_service.Recipes/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/internal_recipes_service.InternalRecipes/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *recipesClient) Get(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *internalRecipesClient) Get(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/internal_recipes_service.Recipes/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/internal_recipes_service.InternalRecipes/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// RecipesServer is the server API for Recipes service.
-type RecipesServer interface {
+// InternalRecipesServer is the server API for InternalRecipes service.
+type InternalRecipesServer interface {
 	Create(context.Context, *Recipe) (*Response, error)
 	Get(context.Context, *Request) (*Response, error)
 }
 
-func RegisterRecipesServer(s *grpc.Server, srv RecipesServer) {
-	s.RegisterService(&_Recipes_serviceDesc, srv)
+func RegisterInternalRecipesServer(s *grpc.Server, srv InternalRecipesServer) {
+	s.RegisterService(&_InternalRecipes_serviceDesc, srv)
 }
 
-func _Recipes_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InternalRecipes_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Recipe)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RecipesServer).Create(ctx, in)
+		return srv.(InternalRecipesServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/internal_recipes_service.Recipes/Create",
+		FullMethod: "/internal_recipes_service.InternalRecipes/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecipesServer).Create(ctx, req.(*Recipe))
+		return srv.(InternalRecipesServer).Create(ctx, req.(*Recipe))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Recipes_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InternalRecipes_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RecipesServer).Get(ctx, in)
+		return srv.(InternalRecipesServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/internal_recipes_service.Recipes/Get",
+		FullMethod: "/internal_recipes_service.InternalRecipes/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecipesServer).Get(ctx, req.(*Request))
+		return srv.(InternalRecipesServer).Get(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Recipes_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "internal_recipes_service.Recipes",
-	HandlerType: (*RecipesServer)(nil),
+var _InternalRecipes_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "internal_recipes_service.InternalRecipes",
+	HandlerType: (*InternalRecipesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Create",
-			Handler:    _Recipes_Create_Handler,
+			Handler:    _InternalRecipes_Create_Handler,
 		},
 		{
 			MethodName: "Get",
-			Handler:    _Recipes_Get_Handler,
+			Handler:    _InternalRecipes_Get_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -461,23 +820,111 @@ func (m *Recipe) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
+	dAtA[i] = 0x8
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(m.Id))
+	dAtA[i] = 0x12
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Name)))
+	i += copy(dAtA[i:], m.Name)
+	dAtA[i] = 0x1a
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Description)))
+	i += copy(dAtA[i:], m.Description)
+	dAtA[i] = 0x22
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Ingredients)))
+	i += copy(dAtA[i:], m.Ingredients)
+	dAtA[i] = 0x2a
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Steps)))
+	i += copy(dAtA[i:], m.Steps)
+	dAtA[i] = 0x32
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Difficulty)))
+	i += copy(dAtA[i:], m.Difficulty)
+	dAtA[i] = 0x3a
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Price)))
+	i += copy(dAtA[i:], m.Price)
+	dAtA[i] = 0x40
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(m.Author))
+	dAtA[i] = 0x4a
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Image)))
+	i += copy(dAtA[i:], m.Image)
+	if m.CreatedAt != nil {
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintInternalRecipesService(dAtA, i, uint64(github_com_gogo_protobuf_types.SizeOfStdTime(*m.CreatedAt)))
+		n1, err := github_com_gogo_protobuf_types.StdTimeMarshalTo(*m.CreatedAt, dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n1
+	}
+	if m.UpdatedAt != nil {
+		dAtA[i] = 0x5a
+		i++
+		i = encodeVarintInternalRecipesService(dAtA, i, uint64(github_com_gogo_protobuf_types.SizeOfStdTime(*m.UpdatedAt)))
+		n2, err := github_com_gogo_protobuf_types.StdTimeMarshalTo(*m.UpdatedAt, dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
+	}
+	return i, nil
+}
+
+func (m *Response) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Response) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Recipe != nil {
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i = encodeVarintInternalRecipesService(dAtA, i, uint64(m.Recipe.Size()))
+		n3, err := m.Recipe.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n3
 	}
-	if len(m.Name) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
+	if len(m.Recipes) > 0 {
+		for _, msg := range m.Recipes {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintInternalRecipesService(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
 	}
-	if len(m.Description) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Description)))
-		i += copy(dAtA[i:], m.Description)
+	if len(m.Errors) > 0 {
+		for _, msg := range m.Errors {
+			dAtA[i] = 0x1a
+			i++
+			i = encodeVarintInternalRecipesService(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
 	}
 	return i, nil
 }
@@ -497,10 +944,27 @@ func (m *Request) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.Query) > 0 {
+		for k, _ := range m.Query {
+			dAtA[i] = 0xa
+			i++
+			v := m.Query[k]
+			mapSize := 1 + len(k) + sovInternalRecipesService(uint64(len(k))) + 1 + len(v) + sovInternalRecipesService(uint64(len(v)))
+			i = encodeVarintInternalRecipesService(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(k)))
+			i += copy(dAtA[i:], k)
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(v)))
+			i += copy(dAtA[i:], v)
+		}
+	}
 	return i, nil
 }
 
-func (m *Response) Marshal() (dAtA []byte, err error) {
+func (m *Error) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -510,43 +974,42 @@ func (m *Response) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Response) MarshalTo(dAtA []byte) (int, error) {
+func (m *Error) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.Created {
-		dAtA[i] = 0x8
-		i++
-		if m.Created {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
+	dAtA[i] = 0x8
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(m.Code))
+	dAtA[i] = 0x12
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(len(m.Description)))
+	i += copy(dAtA[i:], m.Description)
+	return i, nil
+}
+
+func (m *Timestamp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
 	}
-	if m.Recipe != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintInternalRecipesService(dAtA, i, uint64(m.Recipe.Size()))
-		n1, err := m.Recipe.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
-	if len(m.Recipes) > 0 {
-		for _, msg := range m.Recipes {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintInternalRecipesService(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
+	return dAtA[:n], nil
+}
+
+func (m *Timestamp) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	dAtA[i] = 0x8
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(m.Seconds))
+	dAtA[i] = 0x10
+	i++
+	i = encodeVarintInternalRecipesService(dAtA, i, uint64(m.Nanos))
 	return i, nil
 }
 
@@ -565,27 +1028,30 @@ func (m *Recipe) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Id)
-	if l > 0 {
-		n += 1 + l + sovInternalRecipesService(uint64(l))
-	}
+	n += 1 + sovInternalRecipesService(uint64(m.Id))
 	l = len(m.Name)
-	if l > 0 {
-		n += 1 + l + sovInternalRecipesService(uint64(l))
-	}
+	n += 1 + l + sovInternalRecipesService(uint64(l))
 	l = len(m.Description)
-	if l > 0 {
+	n += 1 + l + sovInternalRecipesService(uint64(l))
+	l = len(m.Ingredients)
+	n += 1 + l + sovInternalRecipesService(uint64(l))
+	l = len(m.Steps)
+	n += 1 + l + sovInternalRecipesService(uint64(l))
+	l = len(m.Difficulty)
+	n += 1 + l + sovInternalRecipesService(uint64(l))
+	l = len(m.Price)
+	n += 1 + l + sovInternalRecipesService(uint64(l))
+	n += 1 + sovInternalRecipesService(uint64(m.Author))
+	l = len(m.Image)
+	n += 1 + l + sovInternalRecipesService(uint64(l))
+	if m.CreatedAt != nil {
+		l = github_com_gogo_protobuf_types.SizeOfStdTime(*m.CreatedAt)
 		n += 1 + l + sovInternalRecipesService(uint64(l))
 	}
-	return n
-}
-
-func (m *Request) Size() (n int) {
-	if m == nil {
-		return 0
+	if m.UpdatedAt != nil {
+		l = github_com_gogo_protobuf_types.SizeOfStdTime(*m.UpdatedAt)
+		n += 1 + l + sovInternalRecipesService(uint64(l))
 	}
-	var l int
-	_ = l
 	return n
 }
 
@@ -595,9 +1061,6 @@ func (m *Response) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Created {
-		n += 2
-	}
 	if m.Recipe != nil {
 		l = m.Recipe.Size()
 		n += 1 + l + sovInternalRecipesService(uint64(l))
@@ -608,6 +1071,52 @@ func (m *Response) Size() (n int) {
 			n += 1 + l + sovInternalRecipesService(uint64(l))
 		}
 	}
+	if len(m.Errors) > 0 {
+		for _, e := range m.Errors {
+			l = e.Size()
+			n += 1 + l + sovInternalRecipesService(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *Request) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Query) > 0 {
+		for k, v := range m.Query {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovInternalRecipesService(uint64(len(k))) + 1 + len(v) + sovInternalRecipesService(uint64(len(v)))
+			n += mapEntrySize + 1 + sovInternalRecipesService(uint64(mapEntrySize))
+		}
+	}
+	return n
+}
+
+func (m *Error) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovInternalRecipesService(uint64(m.Code))
+	l = len(m.Description)
+	n += 1 + l + sovInternalRecipesService(uint64(l))
+	return n
+}
+
+func (m *Timestamp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovInternalRecipesService(uint64(m.Seconds))
+	n += 1 + sovInternalRecipesService(uint64(m.Nanos))
 	return n
 }
 
@@ -632,15 +1141,14 @@ func (this *Recipe) String() string {
 		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
 		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
 		`Description:` + fmt.Sprintf("%v", this.Description) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Request) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Request{`,
+		`Ingredients:` + fmt.Sprintf("%v", this.Ingredients) + `,`,
+		`Steps:` + fmt.Sprintf("%v", this.Steps) + `,`,
+		`Difficulty:` + fmt.Sprintf("%v", this.Difficulty) + `,`,
+		`Price:` + fmt.Sprintf("%v", this.Price) + `,`,
+		`Author:` + fmt.Sprintf("%v", this.Author) + `,`,
+		`Image:` + fmt.Sprintf("%v", this.Image) + `,`,
+		`CreatedAt:` + strings.Replace(fmt.Sprintf("%v", this.CreatedAt), "Timestamp", "Timestamp", 1) + `,`,
+		`UpdatedAt:` + strings.Replace(fmt.Sprintf("%v", this.UpdatedAt), "Timestamp", "Timestamp", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -650,9 +1158,51 @@ func (this *Response) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&Response{`,
-		`Created:` + fmt.Sprintf("%v", this.Created) + `,`,
 		`Recipe:` + strings.Replace(fmt.Sprintf("%v", this.Recipe), "Recipe", "Recipe", 1) + `,`,
 		`Recipes:` + strings.Replace(fmt.Sprintf("%v", this.Recipes), "Recipe", "Recipe", 1) + `,`,
+		`Errors:` + strings.Replace(fmt.Sprintf("%v", this.Errors), "Error", "Error", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Request) String() string {
+	if this == nil {
+		return "nil"
+	}
+	keysForQuery := make([]string, 0, len(this.Query))
+	for k, _ := range this.Query {
+		keysForQuery = append(keysForQuery, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForQuery)
+	mapStringForQuery := "map[string]string{"
+	for _, k := range keysForQuery {
+		mapStringForQuery += fmt.Sprintf("%v: %v,", k, this.Query[k])
+	}
+	mapStringForQuery += "}"
+	s := strings.Join([]string{`&Request{`,
+		`Query:` + mapStringForQuery + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Error) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Error{`,
+		`Code:` + fmt.Sprintf("%v", this.Code) + `,`,
+		`Description:` + fmt.Sprintf("%v", this.Description) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Timestamp) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Timestamp{`,
+		`Seconds:` + fmt.Sprintf("%v", this.Seconds) + `,`,
+		`Nanos:` + fmt.Sprintf("%v", this.Nanos) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -666,6 +1216,7 @@ func valueToStringInternalRecipesService(v interface{}) string {
 	return fmt.Sprintf("*%v", pv)
 }
 func (m *Recipe) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -695,10 +1246,10 @@ func (m *Recipe) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			var stringLen uint64
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowInternalRecipesService
@@ -708,24 +1259,11 @@ func (m *Recipe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.Id |= uint(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthInternalRecipesService
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthInternalRecipesService
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Id = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
@@ -758,7 +1296,707 @@ func (m *Recipe) Unmarshal(dAtA []byte) error {
 			}
 			m.Name = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000001)
 		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Description = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000002)
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ingredients", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Ingredients = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Steps", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Steps = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Difficulty", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Difficulty = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Price", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Price = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Author", wireType)
+			}
+			m.Author = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Author |= uint(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Image", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Image = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.CreatedAt == nil {
+				m.CreatedAt = new(time.Time)
+			}
+			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(m.CreatedAt, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.UpdatedAt == nil {
+				m.UpdatedAt = new(time.Time)
+			}
+			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(m.UpdatedAt, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipInternalRecipesService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("name")
+	}
+	if hasFields[0]&uint64(0x00000002) == 0 {
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("description")
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Response) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowInternalRecipesService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Response: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Response: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Recipe", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Recipe == nil {
+				m.Recipe = &Recipe{}
+			}
+			if err := m.Recipe.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Recipes", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Recipes = append(m.Recipes, &Recipe{})
+			if err := m.Recipes[len(m.Recipes)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Errors", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Errors = append(m.Errors, &Error{})
+			if err := m.Errors[len(m.Errors)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipInternalRecipesService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Request) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowInternalRecipesService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Request: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Request: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Query", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Query == nil {
+				m.Query = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowInternalRecipesService
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowInternalRecipesService
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthInternalRecipesService
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthInternalRecipesService
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowInternalRecipesService
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthInternalRecipesService
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthInternalRecipesService
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipInternalRecipesService(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthInternalRecipesService
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.Query[mapkey] = mapvalue
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipInternalRecipesService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthInternalRecipesService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Error) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowInternalRecipesService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Error: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Error: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Code", wireType)
+			}
+			m.Code = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInternalRecipesService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Code |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
 			}
@@ -814,7 +2052,7 @@ func (m *Recipe) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Request) Unmarshal(dAtA []byte) error {
+func (m *Timestamp) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -837,70 +2075,17 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: Request: wiretype end group for non-group")
+			return fmt.Errorf("proto: Timestamp: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Request: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipInternalRecipesService(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthInternalRecipesService
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthInternalRecipesService
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Response) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowInternalRecipesService
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Response: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Response: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: Timestamp: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Created", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Seconds", wireType)
 			}
-			var v int
+			m.Seconds = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowInternalRecipesService
@@ -910,17 +2095,16 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int(b&0x7F) << shift
+				m.Seconds |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.Created = bool(v != 0)
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Recipe", wireType)
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Nanos", wireType)
 			}
-			var msglen int
+			m.Nanos = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowInternalRecipesService
@@ -930,62 +2114,11 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				m.Nanos |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
-				return ErrInvalidLengthInternalRecipesService
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthInternalRecipesService
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Recipe == nil {
-				m.Recipe = &Recipe{}
-			}
-			if err := m.Recipe.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Recipes", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInternalRecipesService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthInternalRecipesService
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthInternalRecipesService
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Recipes = append(m.Recipes, &Recipe{})
-			if err := m.Recipes[len(m.Recipes)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipInternalRecipesService(dAtA[iNdEx:])
