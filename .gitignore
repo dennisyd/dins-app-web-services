@@ -37,3 +37,4 @@
 
 # End of https://www.gitignore.io/api/linux,go
 .env
+prod.yml
