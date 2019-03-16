@@ -34,7 +34,16 @@ func (h *Handler) Create(ctx context.Context, u *pb.User) (*pb.Response, error) 
 
 // Get gets a user from the db by request.query
 func (h *Handler) Get(ctx context.Context, r *pb.Request) (*pb.Response, error) {
+	log.Print("Received request")
 	res := pb.Response{}
+	user := pb.User{}
+	errors := DB.Where(r.Query).First(&user).GetErrors()
+	for _, err := range errors {
+		res.Errors = append(res.Errors, err.Error())
+	}
+	if len(errors) == 0 {
+		res.User = &user
+	}
 	return &res, nil
 }
 
