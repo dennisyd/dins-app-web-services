@@ -21,6 +21,7 @@ require (
 	github.com/mattn/go-isatty v0.0.7 // indirect
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
 	github.com/qor/validations v0.0.0-20171228122639-f364bca61b46
+	github.com/stretchr/testify v1.3.0 // indirect
 	github.com/valyala/fasttemplate v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20190313024323-a1f597ede03a
 	google.golang.org/grpc v1.19.0

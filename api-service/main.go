@@ -16,6 +16,7 @@ import (
 var (
 	server = models.Server{
 		InternalRecipesServerAddr: "localhost:50051",
+		IdentityServerAddr:        "localhost:50052",
 	}
 )
 
@@ -23,16 +24,32 @@ func init() {
 	if v, ok := os.LookupEnv("RECIPES_SERVICE_ADDRESS"); ok {
 		server.InternalRecipesServerAddr = v
 	}
+	if v, ok := os.LookupEnv("IDENTITY_SERVICE_ADDRESS"); ok {
+		server.IdentityServerAddr = v
+	}
 }
 
 func main() {
 
-	// connect to recipes service, if connection is lost
+	// connect to internal recipes service, if connection is lost
 	// retry connection every 3 seconds
 	go func() {
 		for {
 			if server.InternalRecipesClient == nil {
 				conn := connectors.ConnectInternalRecipes(&server)
+				defer conn.Close()
+			}
+			// sleep 3 seconds
+			time.Sleep(3 * time.Second)
+		}
+	}()
+
+	// connect to identity service, if connection is lost
+	// retry connection every 3 seconds
+	go func() {
+		for {
+			if server.IdentityClient == nil {
+				conn := connectors.ConnectIdentity(&server)
 				defer conn.Close()
 			}
 			// sleep 3 seconds
