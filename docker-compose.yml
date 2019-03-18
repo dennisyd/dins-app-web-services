@@ -1,6 +1,7 @@
 version: "3.7"
 
 services:
+# Internal Recipes Service
   internal-recipes-service:
     build:
       context: .
@@ -23,6 +24,7 @@ services:
       - my_net
     depends_on:
       - recipes-db
+# Internal Recipes Service Database
   recipes-db:
     image: mariadb:latest
     command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
@@ -39,6 +41,47 @@ services:
       MYSQL_DATABASE: "recipes"   
     networks:
       - my_net
+# Identity Service
+  identity-service:
+    build:
+      context: .
+      dockerfile: ./identity-service/Dockerfile
+    image: edwincloud/identity-service
+    ports:
+      - "50052:50052"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    environment:
+      SERVICE_ADDRESS: ":50052"
+      DB_HOST: "identity-db"
+      DB_PORT: "3307"
+      DB_NAME: "users"
+      DB_USER: "root"
+      DB_PASSWORD: "secretpassword"
+    networks:
+      - my_net
+    depends_on:
+      - identity-db
+# Identity Service Database
+  identity-db:
+    image: mariadb:latest
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
+    volumes:
+      - identity-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    environment:
+      MYSQL_ROOT_PASSWORD: "secretpassword"
+      MYSQL_DATABASE: "users"   
+    networks:
+      - my_net
+# API Service
   api-service:
     build:
       context: .
@@ -57,9 +100,11 @@ services:
     networks:
       - my_net
 
+# Networks Configuration
 networks:
   my_net:
     driver: overlay
 
+# Volumes Configuration
 volumes:
   recipes-data:
