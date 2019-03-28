@@ -109,3 +109,4 @@ networks:
 # Volumes Configuration
 volumes:
   recipes-data:
+  identity-data:

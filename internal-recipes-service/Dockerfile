@@ -8,6 +8,8 @@ COPY proto proto
 
 RUN apk update && apk add --update --no-cache ca-certificates git
 
+RUN go mod download
+
 WORKDIR /web-services/internal-recipes-service
 COPY internal-recipes-service/. .
 
