@@ -73,6 +73,9 @@ func main() {
 		},
 	}
 
+	// register group for drone
+	server.Echo.Group("/", middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
+
 	// register logging middleware
 	server.Echo.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "${method}  ${uri}  ${latency_human}  ${status}\n",
@@ -80,9 +83,6 @@ func main() {
 
 	// register controller routes with server
 	controllers.Register(&server)
-
-	// register group for drone
-	server.Echo.Group("/", middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
 
 	// start http server
 	server.Echo.Logger.Fatal(server.Echo.Start(":8080"))
