@@ -96,6 +96,8 @@ services:
         condition: on-failure
     environment:
       RECIPES_SERVICE_ADDRESS: "internal-recipes-service:50051"
+      IDENTITY_SERVICE_ADDRESS: "identity-service:50052"
+      DRONE_SERVER_URL: "http://drone-server:2020"
     depends_on:
       - internal-recipes-service
     networks:
