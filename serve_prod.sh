@@ -1,1 +1,1 @@
-docker stack deploy --compose-file=prod.yml dins
+docker stack deploy --compose-file=docker-compose.yml dins

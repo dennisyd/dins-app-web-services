@@ -15,11 +15,11 @@ services:
         condition: on-failure
     environment:
       SERVICE_ADDRESS: ":50051"
-      DB_HOST: "recipes-db"
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       DB_NAME: "recipes"
-      DB_USER: "root"
-      DB_PASSWORD: "secretpassword"
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     networks:
       - my_net
     depends_on:
@@ -37,7 +37,7 @@ services:
       placement:
         constraints: [node.role == manager]
     environment:
-      MYSQL_ROOT_PASSWORD: "secretpassword"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
       MYSQL_DATABASE: "recipes"   
     networks:
       - my_net
@@ -58,9 +58,9 @@ services:
       DB_HOST: "identity-db"
       DB_PORT: "3307"
       DB_NAME: "users"
-      DB_USER: "root"
-      DB_PASSWORD: "secretpassword"
-      JWT_SECRET: "secret"
+      DB_USER: "${DB_USER}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      JWT_SECRET: "${JWT_SECRET}"
     networks:
       - my_net
     depends_on:
@@ -78,7 +78,7 @@ services:
       placement:
         constraints: [node.role == manager]
     environment:
-      MYSQL_ROOT_PASSWORD: "secretpassword"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
       MYSQL_DATABASE: "users"   
     networks:
       - my_net
