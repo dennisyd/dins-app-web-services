@@ -8,7 +8,8 @@ steps:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - docker-compose up -f /drone/src/docker-compose.yml
+      - ls /drone/src
+      - docker-compose up --force-recreate /drone/src/docker-compose.yml
 volumes:
   - name: docker_sock
     host:
