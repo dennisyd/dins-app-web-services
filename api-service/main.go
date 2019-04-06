@@ -75,8 +75,7 @@ func main() {
 	}
 
 	// register proxy middleware
-	proxyGroup := server.Echo.Group("/drone")
-	proxyGroup.Use(middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
+	server.Echo.Use(middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
 
 	// register logging middleware
 	server.Echo.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
