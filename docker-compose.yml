@@ -121,6 +121,7 @@ services:
       - my_net
     volumes:
       - /var/lib/drone:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 # DRONE AGENT
   drone-agent:
     image: drone/agent:1
