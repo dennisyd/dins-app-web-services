@@ -101,24 +101,6 @@ services:
       - internal-recipes-service
     networks:
       - my_net
-# DRONE SERVER
-  drone-server:
-    image: drone/drone:1
-    ports:
-      - "80:80"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-    environment:
-      DRONE_GITHUB_CLIENT_ID: "${DRONE_GITHUB_CLIENT_ID}"
-      DRONE_GITHUB_CLIENT_SECRET: "${DRONE_GITHUB_CLIENT_SECRET}"
-      DRONE_SERVER_HOST: "localhost"
-      DRONE_SERVER_PROTO: "http"
-    networks:
-      - my_net
-    volumes:
-      - /var/lib/drone:/data
 
 # Networks Configuration
 networks:

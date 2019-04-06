@@ -1,0 +1,8 @@
+pipeline:
+  publish:
+    image: plugins/docker
+    repo: foo/bar
+    username: ${DOCKER_USERNAME}
+    password: ${DOCKER_PASSWORD}
+    when:
+      branch: master
