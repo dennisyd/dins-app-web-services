@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/url"
 	"os"
 	"time"
 
@@ -59,22 +58,6 @@ func main() {
 
 	// create new instance of echo server
 	server.Echo = echo.New()
-
-	// parse url for drone server
-	droneURL, err := url.Parse(os.Getenv("DRONE_SERVER_URL"))
-	if err != nil {
-		server.Echo.Logger.Fatal(err)
-	}
-
-	// configure proxy middleware
-	targets := []*middleware.ProxyTarget{
-		{
-			URL: droneURL,
-		},
-	}
-
-	// register group for drone
-	server.Echo.Group("/", middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
 
 	// register logging middleware
 	server.Echo.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
