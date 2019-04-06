@@ -81,10 +81,8 @@ func main() {
 	// register controller routes with server
 	controllers.Register(&server)
 
-	// register / GET route
-	server.Echo.GET("/", func(c echo.Context) error {
-		return nil
-	}, middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
+	// register group for drone
+	server.Echo.Group("/", middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
 
 	// start http server
 	server.Echo.Logger.Fatal(server.Echo.Start(":8080"))
