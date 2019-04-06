@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/http"
 	"net/url"
 	"os"
 	"time"
@@ -74,9 +73,6 @@ func main() {
 		},
 	}
 
-	// register proxy middleware
-	server.Echo.Use(middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
-
 	// register logging middleware
 	server.Echo.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "${method}  ${uri}  ${latency_human}  ${status}\n",
@@ -87,8 +83,8 @@ func main() {
 
 	// register / GET route
 	server.Echo.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+		return nil
+	}, middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
 
 	// start http server
 	server.Echo.Logger.Fatal(server.Echo.Start(":8080"))
