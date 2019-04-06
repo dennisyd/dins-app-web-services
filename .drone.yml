@@ -1,8 +1,15 @@
-pipeline:
-  publish:
-    image: plugins/docker
-    repo: foo/bar
-    username: ${DOCKER_USERNAME}
-    password: ${DOCKER_PASSWORD}
-    when:
-      branch: master
+kind: pipeline
+name: default
+
+steps:
+  - name: test
+    image: compose:1.23.2
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    commands:
+      - up -f /drone/src/docker-compose.yml
+volumes:
+  - name: docker_sock
+    host:
+      path: /var/run/docker.sock
