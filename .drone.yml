@@ -25,6 +25,14 @@ steps:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker-compose push
       - docker-compose up --force-recreate -d
+    when:
+      branch:
+        - master
+      event:
+        - push
+trigger:
+  event:
+    - push
 volumes:
   - name: docker_sock
     host:
