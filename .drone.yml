@@ -2,14 +2,29 @@ kind: pipeline
 name: default
 
 steps:
-  - name: test
+  - name: publish
     image: docker/compose:1.23.2
+    environment:
+      DOCKER_USERNAME:
+        from_secret: DOCKER_USERNAME
+      DOCKER_PASSWORD:
+        from_secret: DOCKER_PASSWORD
+      DB_USER:
+        from_secret: DB_USER
+      DB_PASSWORD:
+        from_secret: DB_PASSWORD
+      DB_ROOT_PASSWORD:
+        from_secret: DB_ROOT_PASSWORD
+      JWT_SECRET:
+        from_secret: JWT_SECRET
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - ls /drone/src
-      - docker-compose up --force-recreate /drone/src/docker-compose.yml
+      - docker-compose build
+      - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - docker-compose push
+      - docker-compose up --force-recreate
 volumes:
   - name: docker_sock
     host:
