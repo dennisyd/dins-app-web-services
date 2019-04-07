@@ -24,7 +24,7 @@ steps:
       - docker-compose build
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker-compose push
-      - docker-compose up --force-recreate
+      - docker-compose up --force-recreate -d
 volumes:
   - name: docker_sock
     host:
