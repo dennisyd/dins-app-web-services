@@ -22,7 +22,7 @@ steps:
         path: /var/run/docker.sock
     commands:
       - docker-compose build
-      - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker-compose push
       - docker-compose up --force-recreate
 volumes:
