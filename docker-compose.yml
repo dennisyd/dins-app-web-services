@@ -6,14 +6,14 @@ services:
     build:
       context: .
       dockerfile: ./internal-recipes-service/Dockerfile
-    image: edwincloud/internal-recipes-service
+    image: edwincloud/internal-recipes-service # image will be used when running a stack instead of building
     ports:
       - "50051:50051"
-    deploy:
-      replicas: 1
+    deploy: # only used for swarm cluster
+      replicas: 1 # instances of the container
       restart_policy:
         condition: on-failure
-    environment:
+    environment: # variables ${} are pulled from a .env file in the same directory
       SERVICE_ADDRESS: ":50051"
       DB_HOST: "recipes-db"
       DB_PORT: "3307"
@@ -27,15 +27,15 @@ services:
 # Internal Recipes Service Database
   recipes-db:
     image: mariadb:latest
-    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
-    volumes:
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci'] # custom command to set default table options
+    volumes: # persist database using docker volumes
       - recipes-data:/var/lib/mysql
     ports:
       - "3306:3306"
     deploy:
       replicas: 1
-      placement:
-        constraints: [node.role == manager]
+      placement: 
+        constraints: [node.role == manager] # when running in swarm, only run instances on main machine (needed to persist data with volumes)
     environment:
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
       MYSQL_DATABASE: "recipes"   
@@ -123,7 +123,7 @@ services:
 #     volumes:
 #       - /var/lib/drone:/data
 #       - /var/run/docker.sock:/var/run/docker.sock
-# # DRONE AGENT
+# # DRONE AGENT - For multiple machines, agent will connect to server using grpc
 #   drone-agent:
 #     image: drone/agent:1
 #     command: agent
@@ -138,8 +138,8 @@ services:
 #       DRONE_RPC_SECRET: "${DRONE_RPC_SECRET}"
 #     networks:
 #       - my_net
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock
+#     volumes: 
+#       - /var/run/docker.sock:/var/run/docker.sock # mount the local machine docker socket so that the agent can create new machines on the local machine (outside of container)
 
 # Networks Configuration
 networks:

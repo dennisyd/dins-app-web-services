@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -26,6 +27,9 @@ func ConnectDB() {
 		os.Getenv("DB_NAME"),
 	))
 	if err != nil {
+		// sleep 5 seconds and try again
+		time.Sleep(time.Second * 5)
+		ConnectDB()
 		log.Fatalf("Unable to open mysql connection: %s", err)
 	}
 }
