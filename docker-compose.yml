@@ -29,7 +29,8 @@ services:
 # Internal Recipes Service Database
   recipes-db:
     image: mariadb:latest
-    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci'] # custom command to set default table options
+    # custom command to set default table options
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
     volumes: # persist database using docker volumes
       - recipes-data:/var/lib/mysql
     ports:
