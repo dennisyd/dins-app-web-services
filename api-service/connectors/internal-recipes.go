@@ -17,8 +17,7 @@ func ConnectInternalRecipes(s *models.Server) *grpc.ClientConn {
 	}
 
 	// register client
-	recipesClient := internalRecipesPb.NewInternalRecipesClient(conn)
-	s.InternalRecipesClient = &recipesClient
+	s.InternalRecipesClient = internalRecipesPb.NewInternalRecipesClient(conn)
 	log.Println("Connected", s.InternalRecipesServerAddr)
 	return conn
 }

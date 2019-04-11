@@ -10,7 +10,7 @@ import (
 type Server struct {
 	Echo                      *echo.Echo
 	InternalRecipesServerAddr string
-	InternalRecipesClient     *internalRecipesPb.InternalRecipesClient
+	InternalRecipesClient     internalRecipesPb.InternalRecipesClient
 	IdentityServerAddr        string
-	IdentityClient            *identityPb.IdentityClient
+	IdentityClient            identityPb.IdentityClient
 }

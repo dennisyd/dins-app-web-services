@@ -15,14 +15,14 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
-// RegisterUsersController registers user controller routes
-func (c *Controller) RegisterUsersController() {
+// RegisterIdentitiesController registers identity controller routes
+func (c *Controller) RegisterIdentitiesController() {
 
 	// below routes do not require a jwt
-	c.Server.Echo.POST("/v1/users/create", c.CreateUser)
-	c.Server.Echo.POST("/v1/users/authorize", c.AuthorizeUser)
+	c.Server.Echo.POST("/v1/identities/create", c.CreateUser)
+	c.Server.Echo.POST("/v1/identities/authorize", c.AuthorizeUser)
 
-	routes := c.Server.Echo.Group("/v1/users")
+	routes := c.Server.Echo.Group("/v1/identities")
 	routes.Use(middleware.JWT([]byte(os.Getenv("JWT_SECRET"))))
 	{
 		routes.GET("", c.GetUser)
@@ -45,7 +45,7 @@ func (c *Controller) CreateUser(e echo.Context) error {
 		})
 	}
 
-	r, err := (*c.Server.IdentityClient).Create(ctx, &user)
+	r, err := c.Server.IdentityClient.Create(ctx, &user)
 	if err != nil {
 		log.Println(err)
 		return e.JSON(http.StatusInternalServerError, models.Response{

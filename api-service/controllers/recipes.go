@@ -26,7 +26,7 @@ func (c *Controller) GetRecipes(e echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := (*c.Server.InternalRecipesClient).Get(ctx, &recipesPb.Request{})
+	r, err := c.Server.InternalRecipesClient.Get(ctx, &recipesPb.Request{})
 	if err != nil {
 		log.Println(err)
 		return e.JSON(http.StatusInternalServerError, models.Response{
@@ -54,7 +54,7 @@ func (c *Controller) CreateRecipe(e echo.Context) error {
 		})
 	}
 
-	r, err := (*c.Server.InternalRecipesClient).Create(ctx, &recipe)
+	r, err := c.Server.InternalRecipesClient.Create(ctx, &recipe)
 	if err != nil {
 		log.Println(err)
 		return e.JSON(http.StatusInternalServerError, models.Response{

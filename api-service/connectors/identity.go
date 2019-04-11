@@ -17,8 +17,7 @@ func ConnectIdentity(s *models.Server) *grpc.ClientConn {
 	}
 
 	// register client
-	identityClient := identityPb.NewIdentityClient(conn)
-	s.IdentityClient = &identityClient
+	s.IdentityClient = identityPb.NewIdentityClient(conn)
 	log.Println("Connected", s.IdentityServerAddr)
 	return conn
 }

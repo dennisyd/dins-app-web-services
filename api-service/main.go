@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"time"
 
 	"github.com/dins-app/web-services/api-service/connectors"
 	"github.com/dins-app/web-services/api-service/controllers"
@@ -30,31 +29,11 @@ func init() {
 
 func main() {
 
-	// connect to internal recipes service, if connection is lost
-	// retry connection every 3 seconds
-	go func() {
-		for {
-			if server.InternalRecipesClient == nil {
-				conn := connectors.ConnectInternalRecipes(&server)
-				defer conn.Close()
-			}
-			// sleep 3 seconds
-			time.Sleep(3 * time.Second)
-		}
-	}()
-
-	// connect to identity service, if connection is lost
-	// retry connection every 3 seconds
-	go func() {
-		for {
-			if server.IdentityClient == nil {
-				conn := connectors.ConnectIdentity(&server)
-				defer conn.Close()
-			}
-			// sleep 3 seconds
-			time.Sleep(3 * time.Second)
-		}
-	}()
+	// connect to grpc services and defer close
+	conn := connectors.ConnectServices(&server)
+	for conn := range serviceConnections {
+		defer conn.Close()
+	}
 
 	// create new instance of echo server
 	server.Echo = echo.New()
