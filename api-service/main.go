@@ -30,8 +30,8 @@ func init() {
 func main() {
 
 	// connect to grpc services and defer close
-	conn := connectors.ConnectServices(&server)
-	for conn := range serviceConnections {
+	serviceConnections := connectors.ConnectServices(&server)
+	for _, conn := range serviceConnections {
 		defer conn.Close()
 	}
 
