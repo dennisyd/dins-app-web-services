@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 
 	pb "github.com/dins-app/web-services/proto/identity-service"
+	"github.com/globalsign/mgo/bson"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,62 +14,72 @@ type Handler struct{}
 
 // Create creates a user in the db
 func (h *Handler) Create(ctx context.Context, u *pb.User) (*pb.Response, error) {
-	log.Print("Received request")
 	res := pb.Response{}
-	if !DB.Where(map[string]string{"email": u.Email}).First(&u).RecordNotFound() {
-		u.Password = ""
-		res.Errors = append(res.Errors, fmt.Sprintf("account %s already exists", u.Email))
-		return &res, nil
-	}
+
+	// hash password
 	password, err := bcrypt.GenerateFromPassword([]byte(u.Password), 10)
 	if err != nil {
 		res.Errors = append(res.Errors, err.Error())
 		return &res, nil
 	}
 	u.Password = string(password)
-	errors := DB.Create(&u).GetErrors()
-	for _, err := range errors {
-		res.Errors = append(res.Errors, err.Error())
-	}
-	if len(errors) == 0 {
+
+	// create user in db
+	err = DB.Insert(u)
+	if err != nil {
 		u.Password = ""
-		res.User = u
+		res.Errors = append(res.Errors, fmt.Sprintf("unable to create new user: %s", err.Error()))
+		return &res, nil
 	}
+
+	// set new user's password to "" so it isn't exposed
+	u.Password = ""
+
+	// set res.User to new user and return res
+	res.User = u
 	return &res, nil
 }
 
 // Get gets a user from the db by request.query
 func (h *Handler) Get(ctx context.Context, r *pb.Request) (*pb.Response, error) {
-	log.Print("Received request")
 	res := pb.Response{}
 	user := pb.User{}
-	errors := DB.Where(r.Query).First(&user).GetErrors()
-	for _, err := range errors {
+
+	// get user from db by r.Query
+	err := DB.Find(r.Query).One(&user)
+	if err != nil {
 		res.Errors = append(res.Errors, err.Error())
+		return &res, nil
 	}
-	if len(errors) == 0 {
-		res.User = &user
-	}
+
+	// set res.User to found user and return res
+	res.User = &user
 	return &res, nil
 }
 
 // Auth authorizes a user by email and password
 func (h *Handler) Auth(ctx context.Context, u *pb.User) (*pb.Response, error) {
-	log.Print("Received request")
 	res := pb.Response{}
 	user := pb.User{}
-	errors := DB.Where(map[string]string{"email": u.Email}).First(&user).GetErrors()
-	for _, err := range errors {
+
+	// get user from db by email
+	err := DB.Find(bson.M{"email": u.Email}).One(&user)
+	if err != nil {
 		res.Errors = append(res.Errors, err.Error())
+		return &res, nil
 	}
-	if len(errors) == 0 {
-		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(u.Password))
-		if err != nil {
-			res.Errors = append(res.Errors, err.Error())
-			return &res, nil
-		}
-		user.Password = ""
-		res.User = &user
+
+	// compare found user password hash to hash of given user
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(u.Password))
+	if err != nil {
+		res.Errors = append(res.Errors, err.Error())
+		return &res, nil
 	}
+
+	// set new user's password to "" so it isn't exposed
+	u.Password = ""
+
+	// set res.User to new user and return res
+	res.User = u
 	return &res, nil
 }

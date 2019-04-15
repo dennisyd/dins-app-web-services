@@ -59,11 +59,7 @@ services:
         condition: on-failure
     environment:
       SERVICE_ADDRESS: ":50052"
-      DB_HOST: "identity-db"
-      DB_PORT: "3307"
-      DB_NAME: "users"
-      DB_USER: "${DB_USER}"
-      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_URI: "identity-db/identities"
       JWT_SECRET: "${JWT_SECRET}"
     networks:
       - my_net
@@ -71,19 +67,15 @@ services:
       - identity-db
 # Identity Service Database
   identity-db:
-    image: mariadb:latest
-    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
+    image: mongo
     volumes:
-      - identity-data:/var/lib/mysql
+      - identity-data:/data/db
     ports:
-      - "3307:3306"
+      - "27017:27017"
     deploy:
       replicas: 1
       placement:
-        constraints: [node.role == manager]
-    environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
-      MYSQL_DATABASE: "users"   
+        constraints: [node.role == manager] 
     networks:
       - my_net
 # API Service
