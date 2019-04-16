@@ -28,21 +28,15 @@ services:
       - recipes-db
 # Internal Recipes Service Database
   recipes-db:
-    image: mariadb:latest
-    # custom command to set default table options
-    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
-    volumes: # persist database using docker volumes
-      - recipes-data:/var/lib/mysql
+    image: mongo
+    volumes:
+      - recipes-data:/data/db
     ports:
-      - "3306:3306"
+      - "27017:27017"
     deploy:
       replicas: 1
-      placement: 
-        # when running in swarm, only run instances on main machine (needed to persist data with volumes)
+      placement:
         constraints: [node.role == manager] 
-    environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
-      MYSQL_DATABASE: "recipes"   
     networks:
       - my_net
 # Identity Service

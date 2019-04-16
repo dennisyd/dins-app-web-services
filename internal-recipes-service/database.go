@@ -1,35 +1,35 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/globalsign/mgo"
 )
 
 var (
 	// DB is the package global db connection
-	DB *gorm.DB
+	DB *mgo.Collection
 )
 
-// ConnectDB connects to mysql db
-func ConnectDB() {
-	var err error
+// ConnectDB connects to mongodb
+func ConnectDB() *mgo.Session {
 
-	DB, err = gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
-	))
+	// connect to mongodb
+	session, err := mgo.DialWithTimeout(os.Getenv("DB_URI"), 3*time.Second) // 3 second timeout
 	if err != nil {
-		// sleep 5 seconds and try again
-		time.Sleep(time.Second * 5)
-		ConnectDB()
-		log.Fatalf("Unable to open mysql connection: %s", err)
+		log.Fatalf("Unable to open mongodb connection: %s", err)
 	}
+
+	// extract DB name from uri
+	uriParts := strings.Split(os.Getenv("DB_URI"), "/")
+	dbName := uriParts[len(uriParts)-1]
+
+	// set DB to our db instance collection
+	DB = session.DB(dbName).C("recipes")
+
+	// return db session
+	return session
 }

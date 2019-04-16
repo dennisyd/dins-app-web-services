@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	pb "github.com/dins-app/web-services/proto/internal-recipes-service"
 )
@@ -13,14 +13,16 @@ type Handler struct{}
 // Create creates a recipes in the db
 func (h *Handler) Create(ctx context.Context, r *pb.Recipe) (*pb.Response, error) {
 	res := pb.Response{}
-	errors := DB.Create(&r).GetErrors()
-	for _, err := range errors {
-		res.Errors = append(res.Errors, err.Error())
+
+	// create recipe in db
+	err := DB.Insert(r)
+	if err != nil {
+		res.Errors = append(res.Errors, fmt.Sprintf("unable to create new recipe: %s", err.Error()))
+		return &res, nil
 	}
-	if len(errors) == 0 {
-		res.Recipe = r
-	}
-	log.Print("Received request")
+
+	// set res.Recipe to created recipe and return res
+	res.Recipe = r
 	return &res, nil
 }
 
@@ -28,8 +30,15 @@ func (h *Handler) Create(ctx context.Context, r *pb.Recipe) (*pb.Response, error
 func (h *Handler) Get(ctx context.Context, req *pb.Request) (*pb.Response, error) {
 	res := pb.Response{}
 	recipes := []*pb.Recipe{}
-	DB.Find(&recipes)
+
+	// get all recipes from db
+	err := DB.Find(nil).All(&recipes)
+	if err != nil {
+		res.Errors = append(res.Errors, fmt.Sprintf("unable to find recipes: %s", err.Error()))
+		return &res, nil
+	}
+
+	// set res.Recipes to found recipes and return res
 	res.Recipes = recipes
-	log.Print("Received request")
 	return &res, nil
 }
