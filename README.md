@@ -2,8 +2,6 @@
 
 ## Getting Started
 
-- Docker and docker-compose is required for development. Get Docker [here](https://www.docker.com/get-started).
-
 To develop locally simply clone the repo and run the following commands to start the services:
 
 ```bash
